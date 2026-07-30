@@ -26,11 +26,13 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.clickable
@@ -87,6 +89,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -869,7 +872,7 @@ class MainActivity : BaseActivity() {
                                 Icon(
                                     imageVector = tabIcon,
                                     contentDescription = stringResource(tab.labelRes),
-                                    modifier = Modifier.size(24.dp),
+                                    modifier = Modifier.size(26.dp),
                                 )
                             },
                             label = {
@@ -1850,40 +1853,108 @@ private fun HomeStatusCard(
         ShizukuStatus.READY -> stringResource(R.string.shizuku_ready)
         ShizukuStatus.NEED_UPDATE -> stringResource(R.string.update_shizuku)
     }
+    val ready = shizukuStatus == ShizukuStatus.READY
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 8.dp),
-        shape = RoundedCornerShape(28.dp),
+            .padding(top = 16.dp, bottom = 8.dp)
+            .animateContentSize(),
+        shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = if (ready) {
+                MaterialTheme.colorScheme.tertiaryContainer
+            } else {
+                MaterialTheme.colorScheme.primaryContainer
+            },
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
+            BrandHeader()
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.shizuku_status, shizukuStatusText),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = if (ready) "IMS toolkit is ready" else "IMS toolkit status",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = if (ready) {
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.shizuku_status, shizukuStatusText),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (ready) {
+                            MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.76f)
+                        } else {
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.76f)
+                        },
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(
+                            if (ready) {
+                                MaterialTheme.colorScheme.tertiary
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            }
+                        )
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = if (ready) "READY" else "CHECK",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (ready) {
+                            MaterialTheme.colorScheme.onTertiary
+                        } else {
+                            MaterialTheme.colorScheme.onPrimary
+                        },
+                    )
+                }
+            }
+            FilledTonalButton(
+                onClick = onRefresh,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Cached,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
                 )
-                FeatureActionChip(
-                    icon = Icons.Rounded.Cached,
-                    label = stringResource(R.string.refresh_permission),
-                    onClick = onRefresh,
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = stringResource(R.string.refresh_permission),
+                    style = MaterialTheme.typography.labelLarge,
                 )
             }
             if (shizukuStatus == ShizukuStatus.NO_PERMISSION) {
-                Button(onClick = onRequestShizukuPermission) {
-                    Text(stringResource(R.string.request_permission))
+                Button(
+                    onClick = onRequestShizukuPermission,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.request_permission),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
         }
@@ -2385,7 +2456,7 @@ private fun SupportPage(
                     enabled = supportEnabled,
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp)
+                        .height(56.dp)
                 ) {
                     Text(stringResource(R.string.support_pay_alipay))
                 }
@@ -2394,7 +2465,7 @@ private fun SupportPage(
                     enabled = supportEnabled,
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp)
+                        .height(56.dp)
                 ) {
                     Text(stringResource(R.string.support_pay_wechat))
                 }
@@ -2472,86 +2543,113 @@ private fun SupportRecordRow(record: SupportRecord) {
     val message = record.payerMessage.ifBlank { stringResource(R.string.support_records_no_message) }
     val reply = record.authorReply.trim()
     val replyMeta = formatSupportPaidAt(record.authorRepliedAt)
-    Column(
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(22.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                text = name.take(1).uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(999.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 3.dp),
-            ) {
-                Text(
-                    text = "¥${record.amount}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
         }
-        Text(
-            text = message,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (reply.isNotBlank()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(7.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = listOf(stringResource(R.string.support_records_author_reply), replyMeta)
-                        .filter { it.isNotBlank() }
-                        .joinToString(" · "),
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = name,
+                    style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    text = reply,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                ) {
+                    Text(
+                        text = "¥${record.amount}",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                }
             }
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            if (reply.isNotBlank()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = listOf(
+                            stringResource(R.string.support_records_author_reply),
+                            replyMeta,
+                        ).filter { it.isNotBlank() }.joinToString(" · "),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = reply,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+
+            Text(
+                text = listOf(formatSupportPaidAt(record.paidAt), record.channel)
+                    .filter { it.isNotBlank() }
+                    .joinToString(" · "),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline,
+            )
         }
-        Text(
-            text = listOf(formatSupportPaidAt(record.paidAt), record.channel)
-                .filter { it.isNotBlank() }
-                .joinToString(" · "),
-            fontSize = 11.sp,
-            color = MaterialTheme.colorScheme.outline,
-        )
     }
 }
 
 private fun formatSupportPaidAt(value: String): String {
     return SupportRules.formatIsoDateTimeForDisplay(value)
+    }
 }
 
 @Composable
@@ -2628,7 +2726,7 @@ private fun CooperationPage(
                     !businessIntentSubmitting &&
                     businessContact.isNotBlank() &&
                     businessMessage.isNotBlank(),
-                modifier = Modifier.height(44.dp)
+                modifier = Modifier.height(56.dp)
             ) {
                 Text(
                     stringResource(
@@ -3155,148 +3253,166 @@ fun SystemInfoCard(
         ShizukuStatus.READY -> stringResource(R.string.shizuku_ready)
         else -> ""
     }
-    val shizukuStatusColor = when (shizukuStatus) {
-        ShizukuStatus.NOT_RUNNING -> MaterialTheme.colorScheme.error
-        ShizukuStatus.NO_PERMISSION -> MaterialTheme.colorScheme.tertiary
-        else -> Color(0xFF16A34A)
-    }
+    val ready = shizukuStatus == ShizukuStatus.READY
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(28.dp),
+            .padding(16.dp)
+            .animateContentSize(),
+        shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
             BrandHeader()
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(id = R.string.system_info),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    HeaderActionChip(
-                        icon = painterResource(R.drawable.ic_github),
-                        label = stringResource(R.string.action_repo),
-                        onClick = {
-                            uriHandler.openUri(REPO_URL)
-                        },
-                    )
-                    HeaderActionChip(
-                        icon = painterResource(R.drawable.ic_issue),
-                        label = stringResource(R.string.action_issue),
-                        onClick = onIssueClick,
-                    )
-                    HeaderActionChip(
-                        icon = painterResource(
-                            if (hasUpdateAvailable) {
-                                R.drawable.ic_update_available
-                            } else {
-                                R.drawable.ic_update
-                            }
-                        ),
-                        label = stringResource(
-                            if (hasUpdateAvailable) {
-                                R.string.action_update_available
-                            } else {
-                                R.string.action_update
-                            }
-                        ),
-                        enabled = !checkingUpdate,
-                        onClick = onCheckUpdate,
-                    )
-                    HeaderActionChip(
-                        icon = painterResource(R.drawable.ic_log),
-                        label = stringResource(R.string.action_logcat),
-                        onClick = onLogcatClick,
-                    )
-                }
-            }
-            val versionAnnotated = buildAnnotatedString {
-                append(stringResource(R.string.current_version, toDisplayVersion(systemInfo.appVersionName)))
-                if (hasUpdateAvailable && !latestAvailableVersion.isNullOrBlank()) {
-                    append(" · ")
-                    withStyle(
-                        SpanStyle(
-                            color = Color(0xFF16A34A),
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    ) {
-                        append(
-                            stringResource(
-                                R.string.update_available_inline,
-                                toDisplayVersion(latestAvailableVersion)
-                            )
-                        )
-                    }
-                }
-            }
-            Text(text = versionAnnotated, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                stringResource(R.string.device_model, systemInfo.deviceModel),
-                fontSize = 14.sp,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                stringResource(R.string.android_version, systemInfo.androidVersion),
-                fontSize = 14.sp,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                stringResource(R.string.security_patch_version, systemInfo.securityPatchVersion),
-                fontSize = 14.sp,
-            )
-            Spacer(modifier = Modifier.height(4.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.shizuku_status, shizukuStatusText),
-                    fontSize = 14.sp,
-                    color = shizukuStatusColor
-                )
-                FeatureActionChip(
-                    icon = Icons.Rounded.Cached,
-                    label = stringResource(id = R.string.refresh_permission),
-                    onClick = onRefresh,
-                )
-            }
-            if (shizukuStatus == ShizukuStatus.NO_PERMISSION) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = onRequestShizukuPermission) {
-                    Text(text = stringResource(id = R.string.request_permission))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(id = R.string.system_info),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = systemInfo.deviceModel,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(
+                            if (hasUpdateAvailable) {
+                                MaterialTheme.colorScheme.tertiaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.primaryContainer
+                            }
+                        )
+                        .padding(horizontal = 14.dp, vertical = 9.dp),
+                ) {
+                    Text(
+                        text = toDisplayVersion(systemInfo.appVersionName),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (hasUpdateAvailable) {
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        },
+                    )
                 }
             }
-            if (showDonateButton) {
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(thickness = 0.5.dp)
-                Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                HeaderActionChip(
+                    icon = painterResource(R.drawable.ic_github),
+                    label = stringResource(R.string.action_repo),
+                    onClick = { uriHandler.openUri(REPO_URL) },
+                )
+                HeaderActionChip(
+                    icon = painterResource(R.drawable.ic_issue),
+                    label = stringResource(R.string.action_issue),
+                    onClick = onIssueClick,
+                )
+                HeaderActionChip(
+                    icon = painterResource(
+                        if (hasUpdateAvailable) R.drawable.ic_update_available else R.drawable.ic_update
+                    ),
+                    label = stringResource(
+                        if (hasUpdateAvailable) R.string.action_update_available else R.string.action_update
+                    ),
+                    enabled = !checkingUpdate,
+                    onClick = onCheckUpdate,
+                )
+                HeaderActionChip(
+                    icon = painterResource(R.drawable.ic_log),
+                    label = stringResource(R.string.action_logcat),
+                    onClick = onLogcatClick,
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                ExpressiveInfoTile(
+                    label = "Android",
+                    value = systemInfo.androidVersion,
+                    modifier = Modifier.weight(1f),
+                )
+                ExpressiveInfoTile(
+                    label = "Patch",
+                    value = systemInfo.securityPatchVersion,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            ExpressiveInfoTile(
+                label = "Runtime",
+                value = if (ready) "Shizuku Ready" else shizukuStatusText,
+                modifier = Modifier.fillMaxWidth(),
+                emphasized = ready,
+            )
+
+            FilledTonalButton(
+                onClick = onRefresh,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Cached,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = stringResource(id = R.string.refresh_permission),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+
+            if (shizukuStatus == ShizukuStatus.NO_PERMISSION) {
                 Button(
+                    onClick = onRequestShizukuPermission,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                ) {
+                    Text(stringResource(id = R.string.request_permission))
+                }
+            }
+
+            if (showDonateButton) {
+                FilledTonalButton(
                     onClick = onDonateClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(44.dp),
-                    colors = ButtonDefaults.buttonColors(
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    )
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    ),
                 ) {
                     Text(
                         text = stringResource(R.string.donation_action),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -3305,31 +3421,84 @@ fun SystemInfoCard(
 }
 
 @Composable
+private fun ExpressiveInfoTile(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    emphasized: Boolean = false,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(22.dp))
+            .background(
+                if (emphasized) {
+                    MaterialTheme.colorScheme.tertiaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                }
+            )
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = value.ifBlank { "-" },
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = if (emphasized) {
+                MaterialTheme.colorScheme.onTertiaryContainer
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
 private fun BrandHeader() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            contentScale = ContentScale.Fit
-        )
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(RoundedCornerShape(22.dp))
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                contentScale = ContentScale.Fit,
+            )
+        }
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(
-                text = stringResource(R.string.brand_name),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                text = "Carrier IMS",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = "for Pixel",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = stringResource(R.string.brand_subtitle),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.outline
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -3349,7 +3518,7 @@ fun CaptivePortalFixCard(
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = stringResource(R.string.captive_portal_fix_title),
                 fontSize = 18.sp,
@@ -3391,7 +3560,7 @@ fun CaptivePortalFixCard(
                 enabled = buttonEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp)
+                    .height(56.dp)
             ) {
                 Text(
                     text = stringResource(actionTextRes)
@@ -3429,20 +3598,23 @@ private fun HeaderActionChip(
     }
     Column(
         modifier = Modifier
-            .width(42.dp)
+            .width(52.dp)
+            .clip(RoundedCornerShape(16.dp))
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(vertical = 2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(
             painter = icon,
             contentDescription = label,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(22.dp),
             tint = contentColor,
         )
         Text(
             text = label,
-            fontSize = 9.sp,
+            style = MaterialTheme.typography.labelMedium,
+            fontSize = 10.sp,
             maxLines = 1,
             overflow = TextOverflow.Clip,
             color = contentColor,
@@ -3541,9 +3713,15 @@ fun FeaturesCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .animateContentSize(),
+        shape = RoundedCornerShape(32.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(24.dp)) {
             var featureMenuExpanded by remember(isSelectAllSim, selectedSim?.subId) { mutableStateOf(false) }
             var showRestoreConfirmDialog by remember(isSelectAllSim, selectedSim?.subId) {
                 mutableStateOf(false)
@@ -4282,17 +4460,38 @@ fun BooleanFeatureItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .clip(RoundedCornerShape(20.dp))
+            .animateContentSize()
+            .padding(vertical = 14.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = title.trim().take(1).uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+        }
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(description, fontSize = 13.sp, color = MaterialTheme.colorScheme.outline)
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
         if (trailingContent != null) {
             trailingContent()
@@ -4300,7 +4499,7 @@ fun BooleanFeatureItem(
             Switch(
                 checked = checked,
                 enabled = enabled,
-                onCheckedChange = onCheckedChange
+                onCheckedChange = onCheckedChange,
             )
         }
     }
