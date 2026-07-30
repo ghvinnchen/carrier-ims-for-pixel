@@ -26,7 +26,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.animation.animateContentSize
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
@@ -2649,7 +2649,6 @@ private fun SupportRecordRow(record: SupportRecord) {
 
 private fun formatSupportPaidAt(value: String): String {
     return SupportRules.formatIsoDateTimeForDisplay(value)
-    }
 }
 
 @Composable
@@ -4461,7 +4460,6 @@ fun BooleanFeatureItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .animateContentSize()
             .padding(vertical = 14.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
