@@ -3752,13 +3752,13 @@ private fun BrandHeader() {
             modifier = Modifier
                 .size(64.dp)
                 .clip(RoundedCornerShape(22.dp))
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)),
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.30f)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.mipmap.ic_launcher),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(58.dp),
                 contentScale = ContentScale.Fit,
             )
         }
@@ -4014,7 +4014,7 @@ fun FeaturesCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(R.string.features_config),
+                    text = "Carrier Features",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -4739,21 +4739,46 @@ fun BooleanFeatureItem(
     trailingContent: (@Composable () -> Unit)? = null,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val normalizedTitle = title.lowercase()
+
+    val badgeText: String? = when {
+        normalizedTitle.contains("5ga") ||
+            normalizedTitle.contains("5g+") -> "5G+"
+        normalizedTitle.contains("show lte as 4g") -> "4G"
+        normalizedTitle.contains("5g nr") -> "5G"
+        else -> null
+    }
+
     val featureIcon = when {
-        title.contains("VoWiFi", ignoreCase = true) ||
-            title.contains("WiFi", ignoreCase = true) -> Icons.Rounded.Wifi
-        title.contains("ViLTE", ignoreCase = true) ||
-            title.contains("Video", ignoreCase = true) -> Icons.Rounded.Videocam
-        title.contains("Cross SIM", ignoreCase = true) -> Icons.Rounded.SwapHoriz
-        title.contains("VoLTE", ignoreCase = true) ||
-            title.contains("VoNR", ignoreCase = true) ||
-            title.contains("Voice", ignoreCase = true) -> Icons.Rounded.Phone
-        title.contains("UT", ignoreCase = true) ||
-            title.contains("Supplementary", ignoreCase = true) -> Icons.Rounded.Settings
-        title.contains("5G", ignoreCase = true) ||
-            title.contains("IMS", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
-        title.contains("APN", ignoreCase = true) -> Icons.Rounded.Public
+        normalizedTitle.contains("vowifi") ||
+            normalizedTitle.contains("wifi calling") -> Icons.Rounded.Wifi
+
+        normalizedTitle.contains("vilte") ||
+            normalizedTitle.contains("video calling") -> Icons.Rounded.Videocam
+
+        normalizedTitle.contains("cross sim") -> Icons.Rounded.SwapHoriz
+
+        normalizedTitle.contains("signal strength") -> Icons.Rounded.Settings
+
+        normalizedTitle.contains("ut supplementary") ||
+            normalizedTitle.contains("supplementary services") -> Icons.Rounded.Settings
+
+        normalizedTitle.contains("volte") ||
+            normalizedTitle.contains("vonr") ||
+            normalizedTitle.contains("voice") -> Icons.Rounded.Phone
+
+        normalizedTitle.contains("ims registration") -> Icons.Rounded.SignalCellularAlt
+
+        normalizedTitle.contains("apn") -> Icons.Rounded.Public
+
         else -> Icons.Rounded.Info
+    }
+
+    val cornerBadge: String? = when {
+        normalizedTitle.contains("ims registration") -> "✓"
+        normalizedTitle.contains("vonr") -> "5G"
+        normalizedTitle.contains("volte") -> "LTE"
+        else -> null
     }
 
     Row(
@@ -4768,16 +4793,61 @@ fun BooleanFeatureItem(
             modifier = Modifier
                 .size(46.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.secondaryContainer),
+                .background(
+                    if (checked) {
+                        MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerHighest
+                    }
+                ),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = featureIcon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
+            if (badgeText != null) {
+                Text(
+                    text = badgeText,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = if (checked) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    maxLines = 1,
+                )
+            } else {
+                Icon(
+                    imageVector = featureIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = if (checked) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+
+                if (cornerBadge != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(horizontal = 3.dp, vertical = 1.dp),
+                    ) {
+                        Text(
+                            text = cornerBadge,
+                            fontSize = if (cornerBadge.length > 1) 6.sp else 8.sp,
+                            lineHeight = 7.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            maxLines = 1,
+                        )
+                    }
+                }
+            }
         }
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
@@ -4792,6 +4862,7 @@ fun BooleanFeatureItem(
                 lineHeight = 21.sp,
             )
         }
+
         if (trailingContent != null) {
             trailingContent()
         } else {
