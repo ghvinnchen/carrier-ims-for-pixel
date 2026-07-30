@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432" viewBox="0 0 432 432">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#FCFBF5"/>
+      <stop offset="100%" stop-color="#F1EEE2"/>
+    </radialGradient>
+  </defs>
+  <circle cx="216" cy="216" r="207" fill="url(#bg)"/>
+  <!--
+    V13 visual specification:
+    - foreground target: 46% of 432px safe canvas
+    - optical Y shift: -1px
+    - centered horizontally
+    The orange SIM artwork remains raster-derived to preserve the user's exact shape.
+  -->
+  <image href="../../app/src/main/res/drawable-nodpi/ic_launcher_foreground.png"
+         x="0" y="0" width="432" height="432"/>
+</svg>
