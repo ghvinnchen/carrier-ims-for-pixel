@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,24 +8,21 @@ plugins {
 
 val namespaceName = "io.github.vvb2060.ims"
 val applicationIdName = "io.github.vvb2060.ims.mod"
-val gitVersionCode: Int = providers.exec {
-    commandLine(
-        "git",
-        "rev-list",
-        "HEAD",
-        "--count"
-    )
-}.standardOutput.asText.get().trim().toInt()
-val gitVersionName: String =
-    providers.exec {
-        commandLine(
-            "git",
-            "rev-parse",
-            "--short=8",
-            "HEAD"
-        )
-    }.standardOutput.asText.get().trim()
+
+fun gitOutput(vararg args: String): String? = runCatching {
+    val process = ProcessBuilder(listOf("git") + args)
+        .directory(rootDir)
+        .redirectErrorStream(true)
+        .start()
+    val output = process.inputStream.bufferedReader().use { it.readText() }.trim()
+    if (process.waitFor() == 0 && output.isNotBlank()) output else null
+}.getOrNull()
+
+// Keep local/source archives buildable even when the .git directory is absent.
+val gitVersionCode: Int = gitOutput("rev-list", "HEAD", "--count")?.toIntOrNull() ?: 1
+val gitVersionName: String = gitOutput("rev-parse", "--short=8", "HEAD") ?: "local"
 val appVersionName: String = libs.versions.app.version.get()
+
 val debugApplicationIdSuffix: String =
     providers.gradleProperty("turboims.debugApplicationIdSuffix")
         .orElse(providers.environmentVariable("TURBOIMS_DEBUG_APPLICATION_ID_SUFFIX"))
@@ -42,6 +41,37 @@ fun configuredString(propertyName: String, environmentName: String, defaultValue
         .orElse(providers.environmentVariable(environmentName))
         .orElse(defaultValue)
         .get()
+}
+
+// Optional release/custom signing. Debug builds fall back to Android's standard debug key.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.isFile) file.inputStream().use(::load)
+}
+
+fun signingValue(propertyName: String, environmentName: String): String? =
+    localProperties.getProperty(propertyName)
+        ?.trim()
+        ?.takeIf(String::isNotEmpty)
+        ?: System.getenv(environmentName)?.trim()?.takeIf(String::isNotEmpty)
+
+val signingStorePath = signingValue("SIGN_KEY_STORE_FILE", "SIGN_KEY_STORE_FILE")
+val signingStorePassword = signingValue("SIGN_KEY_STORE_PASSWORD", "SIGN_KEY_STORE_PASSWORD")
+val signingKeyAlias = signingValue("SIGN_KEY_ALIAS", "SIGN_KEY_ALIAS")
+val signingKeyPassword = signingValue("SIGN_KEY_PASSWORD", "SIGN_KEY_PASSWORD")
+val signingStoreFile = signingStorePath?.let(rootProject::file)
+val hasCompleteSigning = listOf(
+    signingStorePath,
+    signingStorePassword,
+    signingKeyAlias,
+    signingKeyPassword
+).all { !it.isNullOrBlank() } && signingStoreFile?.isFile == true
+
+if (signingStorePath != null && signingStoreFile?.isFile != true) {
+    logger.warn("CarrierIMS signing key was configured but the file does not exist: $signingStorePath")
+}
+if (!hasCompleteSigning) {
+    logger.lifecycle("CarrierIMS: custom signing not configured; debug builds use the standard debug key and release builds are unsigned.")
 }
 
 kotlin {
@@ -127,7 +157,14 @@ android {
         }
     }
     signingConfigs {
-        create("sign")
+        if (hasCompleteSigning) {
+            create("sign") {
+                storeFile = signingStoreFile
+                storePassword = signingStorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
+            }
+        }
     }
     buildTypes {
         debug {
@@ -139,7 +176,9 @@ android {
             if (debugApplicationIdSuffix.isNotBlank()) {
                 applicationIdSuffix = debugApplicationIdSuffix
             }
-            signingConfig = signingConfigs.getByName("sign")
+            if (hasCompleteSigning) {
+                signingConfig = signingConfigs.getByName("sign")
+            }
         }
         release {
             isMinifyEnabled = true
@@ -148,7 +187,9 @@ android {
             vcsInfo.include = false
             proguardFiles("proguard-rules.pro")
             versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
-            signingConfig = signingConfigs.getByName("sign")
+            if (hasCompleteSigning) {
+                signingConfig = signingConfigs.getByName("sign")
+            }
         }
     }
     compileOptions {
@@ -194,5 +235,3 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.org.json)
 }
-
-apply(from = rootProject.file("signing.gradle"))

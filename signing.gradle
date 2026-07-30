@@ -1,17 +1,14 @@
-def kFile = rootProject.file('local.properties')
-def props = new Properties()
-if (kFile.canRead()) {
-    props.load(new FileInputStream(kFile))
-
-    if (props != null) {
-        android.signingConfigs.sign.storeFile file(props['SIGN_KEY_STORE_FILE'])
-        android.signingConfigs.sign.storePassword props['SIGN_KEY_STORE_PASSWORD']
-        android.signingConfigs.sign.keyAlias props['SIGN_KEY_ALIAS']
-        android.signingConfigs.sign.keyPassword props['SIGN_KEY_PASSWORD']
-    }
-} else {
-    android.signingConfigs.sign.storeFile file(System.getenv('SIGN_KEY_STORE_FILE'))
-    android.signingConfigs.sign.storePassword System.getenv('SIGN_KEY_STORE_PASSWORD')
-    android.signingConfigs.sign.keyAlias System.getenv('SIGN_KEY_ALIAS')
-    android.signingConfigs.sign.keyPassword System.getenv('SIGN_KEY_PASSWORD')
-}
+/*
+ * Signing is now configured safely in app/build.gradle.kts.
+ *
+ * This compatibility placeholder is intentionally kept so existing forks or
+ * scripts that expect signing.gradle do not fail because the file is absent.
+ * Do not apply this file from app/build.gradle.kts.
+ *
+ * Configure an optional custom key in local.properties (not committed):
+ * SIGN_KEY_STORE_FILE=D:\\AndroidKeys\\carrierims.jks
+ * SIGN_KEY_STORE_PASSWORD=your_store_password
+ * SIGN_KEY_ALIAS=carrierims
+ * SIGN_KEY_PASSWORD=your_key_password
+ */
+logger.lifecycle("CarrierIMS: signing.gradle compatibility placeholder loaded; signing is managed by app/build.gradle.kts.")

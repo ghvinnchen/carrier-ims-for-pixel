@@ -1,0 +1,8 @@
+# Copy only the SIGN_* lines you need into your local.properties.
+# Never commit local.properties or your keystore.
+
+# Windows paths may use forward slashes (recommended):
+SIGN_KEY_STORE_FILE=D:/AndroidKeys/carrierims.jks
+SIGN_KEY_STORE_PASSWORD=replace_with_store_password
+SIGN_KEY_ALIAS=carrierims
+SIGN_KEY_PASSWORD=replace_with_key_password
