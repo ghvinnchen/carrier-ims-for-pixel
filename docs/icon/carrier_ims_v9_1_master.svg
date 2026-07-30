@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432" viewBox="0 0 432 432">
+  <defs>
+    <linearGradient id="phoneBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1886E8"/>
+      <stop offset="100%" stop-color="#083876"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D6F2FF"/>
+      <stop offset="100%" stop-color="#0076EC"/>
+    </linearGradient>
+    <radialGradient id="bg">
+      <stop offset="0%" stop-color="#F3FAFF"/>
+      <stop offset="100%" stop-color="#DDEEFF"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="4" dy="7" stdDeviation="7" flood-color="#002D5F" flood-opacity=".16"/>
+    </filter>
+  </defs>
+
+  <circle cx="216" cy="216" r="207" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <rect x="145" y="101" width="142" height="245" rx="32" fill="url(#phoneBody)"/>
+    <rect x="156" y="132" width="120" height="197" rx="14" fill="url(#screen)"/>
+    <rect x="195" y="115" width="42" height="6" rx="3" fill="#083D78" fill-opacity=".8"/>
+    <circle cx="176" cy="119" r="4.5" fill="#1458A0" fill-opacity=".78"/>
+    <circle cx="188" cy="119" r="3" fill="#78BEF5" fill-opacity=".72"/>
+    <rect x="245" y="148" width="25" height="12" rx="6" fill="white" fill-opacity=".57"/>
+    <circle cx="251" cy="154" r="2" fill="#26B35C"/>
+    <rect x="256" y="154" width="2" height="3" rx="1" fill="#1469D2"/>
+    <rect x="260" y="152" width="2" height="5" rx="1" fill="#1469D2"/>
+    <rect x="264" y="150" width="2" height="7" rx="1" fill="#1469D2"/>
+  </g>
+</svg>
