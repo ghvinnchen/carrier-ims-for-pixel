@@ -62,6 +62,13 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Handshake
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.SignalCellularAlt
+import androidx.compose.material.icons.rounded.Wifi
+import androidx.compose.material.icons.rounded.Videocam
+import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Public
+import androidx.compose.material.icons.rounded.Phone
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.AlertDialog
@@ -2161,45 +2168,130 @@ private fun NetworkExitCard(
     error: String?,
     onCheck: () -> Unit,
 ) {
+    val verified = status != null && error == null
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
+            .animateContentSize(),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (verified) {
+                MaterialTheme.colorScheme.tertiaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHigh
+            },
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = stringResource(R.string.network_exit_title),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = stringResource(R.string.network_exit_desc),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.outline,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Public,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.network_exit_title),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = stringResource(R.string.network_exit_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                if (verified) {
+                    V6StatusChip(label = "VERIFIED", positive = true)
+                }
+            }
+
             Button(
                 onClick = onCheck,
                 enabled = !checking,
-                modifier = Modifier.height(40.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(18.dp),
             ) {
-                Text(stringResource(if (checking) R.string.network_exit_checking else R.string.network_exit_action))
+                Text(
+                    text = stringResource(
+                        if (checking) R.string.network_exit_checking else R.string.network_exit_action
+                    ),
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
+
             if (checking) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(999.dp)),
+                )
             }
+
             if (error != null) {
-                Text(text = stringResource(R.string.network_exit_failed, error), color = MaterialTheme.colorScheme.error)
+                Text(
+                    text = stringResource(R.string.network_exit_failed, error),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
             }
+
             status?.let {
-                KeyValueRow(stringResource(R.string.network_exit_ip), "${it.ip} · ${it.ipVersion}")
-                KeyValueRow(stringResource(R.string.network_exit_region), listOf(it.country, it.region, it.city).filter { text -> text.isNotBlank() }.joinToString(" / "))
-                KeyValueRow(stringResource(R.string.network_exit_org), it.org)
-                KeyValueRow(stringResource(R.string.network_exit_risk), it.risk)
-                KeyValueRow(stringResource(R.string.network_exit_services), serviceSummary(it))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    V6MetricTile(
+                        label = stringResource(R.string.network_exit_ip),
+                        value = "${it.ip} · ${it.ipVersion}",
+                        modifier = Modifier.weight(1f),
+                    )
+                    V6MetricTile(
+                        label = stringResource(R.string.network_exit_risk),
+                        value = it.risk,
+                        modifier = Modifier.weight(1f),
+                        emphasized = it.risk.equals("low", ignoreCase = true),
+                    )
+                }
+                V6MetricTile(
+                    label = stringResource(R.string.network_exit_region),
+                    value = listOf(it.country, it.region, it.city)
+                        .filter { item -> item.isNotBlank() }
+                        .joinToString(" / "),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                V6MetricTile(
+                    label = stringResource(R.string.network_exit_org),
+                    value = it.org,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Text(
+                    text = serviceSummary(it),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
@@ -2310,11 +2402,16 @@ private fun QuickSettingsGuideCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.qs_guide_title),
@@ -2380,12 +2477,18 @@ private fun QuickTileButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Button(
+    FilledTonalButton(
         onClick = onClick,
-        modifier = modifier.height(40.dp),
-        contentPadding = ButtonDefaults.ContentPadding,
+        modifier = modifier.height(48.dp),
+        shape = RoundedCornerShape(999.dp),
+        contentPadding = PaddingValues(horizontal = 14.dp),
     ) {
-        Text(label, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -2402,57 +2505,102 @@ private fun ConfigBackupCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
+            .animateContentSize(),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(R.string.config_backup_title),
-                    modifier = Modifier.weight(1f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Button(onClick = onBackupConfig, modifier = Modifier.height(40.dp)) {
-                    Text(stringResource(R.string.config_backup_action))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Backup,
+                        contentDescription = null,
+                        modifier = Modifier.size(26.dp),
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.config_backup_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = if (selectedSim != null && selectedSim.subId >= 0) {
+                            stringResource(R.string.config_backup_desc, selectedSim.showTitle)
+                        } else {
+                            stringResource(R.string.select_single_sim)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
-            Text(
-                text = if (selectedSim != null && selectedSim.subId >= 0) {
-                    stringResource(R.string.config_backup_desc, selectedSim.showTitle)
-                } else {
-                    stringResource(R.string.select_single_sim)
-                },
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.outline,
-            )
+
+            Button(
+                onClick = onBackupConfig,
+                enabled = selectedSim != null && selectedSim.subId >= 0,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.config_backup_action),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+
             if (backups.isEmpty()) {
                 Text(
                     text = stringResource(R.string.config_backup_empty),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 backups.forEach { backup ->
                     HorizontalDivider(thickness = 0.5.dp)
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(backup.name, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text(
+                                text = backup.name,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                            )
                             Text(
                                 text = backupSubtitle(backup),
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         TextButton(onClick = { onRestoreBackup(backup) }) {
                             Text(stringResource(R.string.config_backup_restore))
                         }
-                        TextButton(onClick = { onDeleteBackup(backup) }) {
-                            Text(stringResource(R.string.config_backup_delete))
+                        IconButton(onClick = { onDeleteBackup(backup) }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = stringResource(R.string.config_backup_delete),
+                            )
                         }
                     }
                 }
@@ -2783,11 +2931,16 @@ private fun CooperationPage(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(stringResource(R.string.business_contact_title), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Text(stringResource(R.string.business_contact_desc), fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
@@ -2798,31 +2951,49 @@ private fun CooperationPage(
                     color = MaterialTheme.colorScheme.outline,
                 )
             }
-            OutlinedTextField(
+            TextField(
                 value = businessName,
                 onValueChange = { businessName = it.take(40) },
                 label = { Text(stringResource(R.string.business_name_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
-            OutlinedTextField(
+            TextField(
                 value = businessContact,
                 onValueChange = { businessContact = it.take(120) },
                 label = { Text(stringResource(R.string.business_contact_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
             BusinessIntentTypeField(
                 value = businessIntentType,
                 onValueChange = { businessIntentType = it },
             )
-            OutlinedTextField(
+            TextField(
                 value = businessMessage,
                 onValueChange = { businessMessage = it.take(500) },
                 label = { Text(stringResource(R.string.business_message_label)) },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2,
-                maxLines = 4,
+                minLines = 3,
+                maxLines = 5,
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
             Button(
                 onClick = {
@@ -4569,10 +4740,19 @@ fun BooleanFeatureItem(
     onCheckedChange: (Boolean) -> Unit
 ) {
     val featureIcon = when {
-        title.contains("IMS", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
-        title.contains("VoNR", ignoreCase = true) -> Icons.Rounded.Favorite
-        title.contains("5G", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
-        title.contains("APN", ignoreCase = true) -> Icons.Rounded.AddCircle
+        title.contains("VoWiFi", ignoreCase = true) ||
+            title.contains("WiFi", ignoreCase = true) -> Icons.Rounded.Wifi
+        title.contains("ViLTE", ignoreCase = true) ||
+            title.contains("Video", ignoreCase = true) -> Icons.Rounded.Videocam
+        title.contains("Cross SIM", ignoreCase = true) -> Icons.Rounded.SwapHoriz
+        title.contains("VoLTE", ignoreCase = true) ||
+            title.contains("VoNR", ignoreCase = true) ||
+            title.contains("Voice", ignoreCase = true) -> Icons.Rounded.Phone
+        title.contains("UT", ignoreCase = true) ||
+            title.contains("Supplementary", ignoreCase = true) -> Icons.Rounded.Settings
+        title.contains("5G", ignoreCase = true) ||
+            title.contains("IMS", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
+        title.contains("APN", ignoreCase = true) -> Icons.Rounded.Public
         else -> Icons.Rounded.Info
     }
 
