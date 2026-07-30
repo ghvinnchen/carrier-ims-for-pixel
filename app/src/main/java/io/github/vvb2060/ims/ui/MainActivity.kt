@@ -55,6 +55,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Cached
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Handshake
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.SignalCellularAlt
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -839,29 +846,40 @@ class MainActivity : BaseActivity() {
         }
 
         Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    tonalElevation = NavigationBarDefaults.Elevation,
+                ) {
                     MainTab.entries.forEach { tab ->
+                        val tabIcon = when (tab) {
+                            MainTab.IMS -> Icons.Rounded.SignalCellularAlt
+                            MainTab.EXTRA -> Icons.Rounded.AddCircle
+                            MainTab.SUPPORT -> Icons.Rounded.Favorite
+                            MainTab.COOPERATION -> Icons.Rounded.Handshake
+                            MainTab.ABOUT -> Icons.Rounded.Info
+                        }
                         NavigationBarItem(
                             selected = selectedTab == tab,
                             onClick = { selectedTab = tab },
                             icon = {
-                                Text(
-                                    text = when (tab) {
-                                        MainTab.IMS -> "IMS"
-                                        MainTab.EXTRA -> "+"
-                                        MainTab.SUPPORT -> "$"
-                                        MainTab.COOPERATION -> "AD"
-                                        MainTab.ABOUT -> "i"
-                                    },
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                Icon(
+                                    imageVector = tabIcon,
+                                    contentDescription = stringResource(tab.labelRes),
+                                    modifier = Modifier.size(24.dp),
                                 )
                             },
-                            label = { Text(stringResource(tab.labelRes), fontSize = 11.sp) }
+                            label = {
+                                Text(
+                                    text = stringResource(tab.labelRes),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1,
+                                )
+                            },
+                            alwaysShowLabel = true,
                         )
                     }
                 }
@@ -1836,7 +1854,12 @@ private fun HomeStatusCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 8.dp)
+            .padding(top = 16.dp, bottom = 8.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -2007,7 +2030,7 @@ private fun TiktokFixCard(
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             BooleanFeatureItem(
                 title = stringResource(R.string.tiktok_network_fix),
                 description = if (available) {
@@ -3069,7 +3092,7 @@ private fun SimpleMessageCard(
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Text(title, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(4.dp))
             Text(body, fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
@@ -3142,6 +3165,11 @@ fun SystemInfoCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             BrandHeader()
@@ -3437,6 +3465,11 @@ fun SimCardSelectionCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(
