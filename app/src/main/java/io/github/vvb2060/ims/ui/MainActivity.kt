@@ -3756,7 +3756,7 @@ private fun BrandHeader() {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
+                painter = painterResource(id = R.drawable.ic_launcher_brand),
                 contentDescription = null,
                 modifier = Modifier.size(58.dp),
                 contentScale = ContentScale.Fit,
