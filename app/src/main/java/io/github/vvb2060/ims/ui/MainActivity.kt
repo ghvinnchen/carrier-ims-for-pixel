@@ -92,6 +92,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -156,6 +158,8 @@ import io.github.vvb2060.ims.tiles.SIM1VoLTETileService
 import io.github.vvb2060.ims.tiles.SIM2IMSStatusTileService
 import io.github.vvb2060.ims.tiles.SIM2VoLTETileService
 import io.github.vvb2060.ims.viewmodel.MainViewModel
+import io.github.vvb2060.ims.ui.components.V6StatusChip
+import io.github.vvb2060.ims.ui.components.V6MetricTile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -894,6 +898,7 @@ class MainActivity : BaseActivity() {
                     .consumeWindowInsets(innerPadding)
                     .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
+                    .padding(bottom = 24.dp)
             ) {
                 if (selectedTab == MainTab.IMS) {
                     HomeStatusCard(
@@ -2048,42 +2053,74 @@ private fun RegionCompatibilityCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 text = stringResource(R.string.region_compat_title),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
             )
+
             val sim = selectedSim
             if (sim == null || sim.subId < 0) {
                 Text(
                     text = stringResource(R.string.select_single_sim),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 return@Column
             }
-            KeyValueRow("MCC/MNC", "${sim.mcc.ifBlank { "-" }}/${sim.mnc.ifBlank { "-" }}")
-            KeyValueRow("ISO", displayCountryIso(sim))
-            KeyValueRow(
-                stringResource(R.string.region_mainland_sim),
-                stringResource(if (isDomestic) R.string.region_status_yes else R.string.region_status_no),
-            )
-            KeyValueRow(
-                stringResource(R.string.region_tiktok_applicable),
-                stringResource(
-                    if (isDomestic) {
-                        R.string.region_status_applicable
-                    } else {
-                        R.string.region_status_not_applicable
-                    }
-                ),
-            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                V6MetricTile(
+                    label = "MCC/MNC",
+                    value = "${sim.mcc.ifBlank { "-" }}/${sim.mnc.ifBlank { "-" }}",
+                    modifier = Modifier.weight(1f),
+                )
+                V6MetricTile(
+                    label = "ISO",
+                    value = displayCountryIso(sim),
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                V6MetricTile(
+                    label = stringResource(R.string.region_mainland_sim),
+                    value = stringResource(
+                        if (isDomestic) R.string.region_status_yes else R.string.region_status_no
+                    ),
+                    modifier = Modifier.weight(1f),
+                    emphasized = isDomestic,
+                )
+                V6MetricTile(
+                    label = stringResource(R.string.region_tiktok_applicable),
+                    value = stringResource(
+                        if (isDomestic) {
+                            R.string.region_status_applicable
+                        } else {
+                            R.string.region_status_not_applicable
+                        }
+                    ),
+                    modifier = Modifier.weight(1f),
+                    emphasized = isDomestic,
+                )
+            }
         }
     }
 }
@@ -2178,40 +2215,87 @@ private fun ApnSimInfoCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(
                 text = stringResource(R.string.apn_sim_title),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
             )
+
             val sim = selectedSim
             if (sim == null || sim.subId < 0) {
                 Text(
                     text = stringResource(R.string.select_single_sim),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                KeyValueRow(stringResource(R.string.sim_card), sim.showTitle)
-                KeyValueRow("MCC/MNC", "${sim.mcc.ifBlank { "-" }}/${sim.mnc.ifBlank { "-" }}")
-                KeyValueRow("ISO", displayCountryIso(sim))
-                KeyValueRow("ICCID", sim.iccId.takeLast(4).ifBlank { "----" })
+                V6MetricTile(
+                    label = stringResource(R.string.sim_card),
+                    value = sim.showTitle,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    V6MetricTile(
+                        label = "MCC/MNC",
+                        value = "${sim.mcc.ifBlank { "-" }}/${sim.mnc.ifBlank { "-" }}",
+                        modifier = Modifier.weight(1f),
+                    )
+                    V6MetricTile(
+                        label = "ISO",
+                        value = displayCountryIso(sim),
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                V6StatusChip(
+                    label = "ICCID • ${sim.iccId.takeLast(4).ifBlank { "----" }}",
+                    positive = true,
+                )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onOpenApnSettings, modifier = Modifier.height(40.dp)) {
-                    Text(stringResource(R.string.open_apn_settings))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                FilledTonalButton(
+                    onClick = onOpenApnSettings,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.open_apn_settings),
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1,
+                    )
                 }
                 Button(
                     onClick = onPrepareApn,
                     enabled = selectedSim != null && selectedSim.subId >= 0,
-                    modifier = Modifier.height(40.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
                 ) {
-                    Text(stringResource(R.string.apn_auto_apply))
+                    Text(
+                        text = stringResource(R.string.apn_auto_apply),
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 2,
+                    )
                 }
             }
         }
@@ -2395,11 +2479,16 @@ private fun SupportPage(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(stringResource(R.string.support_message_title), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             if (!supportPaymentConfigured) {
@@ -2420,27 +2509,45 @@ private fun SupportPage(
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.outline,
             )
-            OutlinedTextField(
+            TextField(
                 value = name,
                 onValueChange = { name = it.take(24) },
                 label = { Text(stringResource(R.string.support_name_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
-            OutlinedTextField(
+            TextField(
                 value = message,
                 onValueChange = { message = it.take(120) },
                 label = { Text(stringResource(R.string.support_message_label)) },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2,
-                maxLines = 4,
+                minLines = 3,
+                maxLines = 5,
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
-            OutlinedTextField(
+            TextField(
                 value = amount,
                 onValueChange = { raw -> amount = raw.filter { it.isDigit() || it == '.' }.take(8) },
                 label = { Text(stringResource(R.string.support_amount_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("9.90", "30", "100").forEach { preset ->
@@ -2451,7 +2558,7 @@ private fun SupportPage(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
+                FilledTonalButton(
                     onClick = { onCreateSupportOrder(name, message, amount, SupportPaymentChannel.ALIPAY) },
                     enabled = supportEnabled,
                     modifier = Modifier
@@ -2460,7 +2567,7 @@ private fun SupportPage(
                 ) {
                     Text(stringResource(R.string.support_pay_alipay))
                 }
-                OutlinedButton(
+                FilledTonalButton(
                     onClick = { onCreateSupportOrder(name, message, amount, SupportPaymentChannel.WECHAT) },
                     enabled = supportEnabled,
                     modifier = Modifier
@@ -2476,11 +2583,16 @@ private fun SupportPage(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(
                 text = stringResource(R.string.support_records_title),
@@ -4456,39 +4568,48 @@ fun BooleanFeatureItem(
     trailingContent: (@Composable () -> Unit)? = null,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val featureIcon = when {
+        title.contains("IMS", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
+        title.contains("VoNR", ignoreCase = true) -> Icons.Rounded.Favorite
+        title.contains("5G", ignoreCase = true) -> Icons.Rounded.SignalCellularAlt
+        title.contains("APN", ignoreCase = true) -> Icons.Rounded.AddCircle
+        else -> Icons.Rounded.Info
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .padding(vertical = 14.dp, horizontal = 4.dp),
+            .clip(RoundedCornerShape(22.dp))
+            .padding(vertical = 15.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Box(
             modifier = Modifier
-                .size(42.dp)
-                .clip(RoundedCornerShape(14.dp))
+                .size(46.dp)
+                .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.secondaryContainer),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = title.trim().take(1).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            Icon(
+                imageVector = featureIcon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 21.sp,
             )
         }
         if (trailingContent != null) {
