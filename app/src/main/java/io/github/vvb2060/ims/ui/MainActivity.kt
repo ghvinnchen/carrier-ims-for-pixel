@@ -4794,11 +4794,7 @@ fun BooleanFeatureItem(
                 .size(46.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (checked) {
-                        MaterialTheme.colorScheme.secondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainerHighest
-                    }
+                    MaterialTheme.colorScheme.secondaryContainer
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -4807,11 +4803,7 @@ fun BooleanFeatureItem(
                     text = badgeText,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = if (checked) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     maxLines = 1,
                 )
             } else {
@@ -4819,11 +4811,7 @@ fun BooleanFeatureItem(
                     imageVector = featureIcon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = if (checked) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
 
                 if (cornerBadge != null) {
