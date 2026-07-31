@@ -62,15 +62,16 @@ fun V6StatusChip(
     label: String,
     modifier: Modifier = Modifier,
     positive: Boolean = true,
+    neutral: Boolean = false,
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(999.dp))
             .background(
-                if (positive) {
-                    MaterialTheme.colorScheme.tertiaryContainer
-                } else {
-                    MaterialTheme.colorScheme.errorContainer
+                when {
+                    neutral -> MaterialTheme.colorScheme.surfaceContainerHighest
+                    positive -> MaterialTheme.colorScheme.tertiaryContainer
+                    else -> MaterialTheme.colorScheme.errorContainer
                 }
             )
             .padding(horizontal = 13.dp, vertical = 8.dp),
@@ -79,10 +80,10 @@ fun V6StatusChip(
             text = label,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
-            color = if (positive) {
-                MaterialTheme.colorScheme.onTertiaryContainer
-            } else {
-                MaterialTheme.colorScheme.onErrorContainer
+            color = when {
+                neutral -> MaterialTheme.colorScheme.onSurface
+                positive -> MaterialTheme.colorScheme.onTertiaryContainer
+                else -> MaterialTheme.colorScheme.onErrorContainer
             },
         )
     }

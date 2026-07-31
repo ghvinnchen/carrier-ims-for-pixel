@@ -2413,7 +2413,7 @@ private fun ApnSimInfoCard(
                 }
                 V6StatusChip(
                     label = "ICCID • ${sim.iccId.takeLast(4).ifBlank { "----" }}",
-                    positive = true,
+                    neutral = true,
                 )
             }
 
