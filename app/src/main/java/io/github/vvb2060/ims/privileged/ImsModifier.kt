@@ -241,7 +241,7 @@ class ImsModifier : Instrumentation() {
         val binder = ServiceManager.getService(Context.ACTIVITY_SERVICE)
         val am = IActivityManager.Stub.asInterface(ShizukuBinderWrapper(binder))
         Log.i(TAG, "starting shell permission delegation")
-        am.startDelegateShellPermissionIdentity(Os.getuid(), null)
+        val delegateStarted = startShellPermissionDelegationCompat(am)
         try {
             val cm = context.getSystemService(CarrierConfigManager::class.java)
             val sm = context.getSystemService(SubscriptionManager::class.java)
@@ -281,8 +281,75 @@ class ImsModifier : Instrumentation() {
                 }
             }
         } finally {
-            am.stopDelegateShellPermissionIdentity()
+            if (delegateStarted) {
+                stopShellPermissionDelegationCompat(am)
+            }
+        }
+    }
+
+    /**
+     * Android 17 compatibility:
+     *
+     * Some platform builds no longer expose one or both delegate-shell methods
+     * through the runtime IActivityManager interface. Calling them directly can
+     * produce NoSuchMethodError before normal exception handling is useful.
+     *
+     * Invoke them reflectively so a missing hidden API does not overwrite an
+     * otherwise successful CarrierConfig operation.
+     */
+    private fun startShellPermissionDelegationCompat(am: IActivityManager): Boolean {
+        return try {
+            val method = am.javaClass.methods.firstOrNull {
+                it.name == "startDelegateShellPermissionIdentity" &&
+                    it.parameterTypes.size == 2
+            }
+            if (method == null) {
+                Log.w(
+                    TAG,
+                    "startDelegateShellPermissionIdentity is unavailable; " +
+                        "continuing with the current Shizuku instrumentation identity"
+                )
+                false
+            } else {
+                method.isAccessible = true
+                method.invoke(am, Os.getuid(), null)
+                Log.i(TAG, "started shell permission delegation")
+                true
+            }
+        } catch (error: Throwable) {
+            Log.w(
+                TAG,
+                "Unable to start shell permission delegation; " +
+                    "continuing with the current Shizuku instrumentation identity",
+                error
+            )
+            false
+        }
+    }
+
+    private fun stopShellPermissionDelegationCompat(am: IActivityManager) {
+        try {
+            val method = am.javaClass.methods.firstOrNull {
+                it.name == "stopDelegateShellPermissionIdentity" &&
+                    it.parameterTypes.isEmpty()
+            }
+            if (method == null) {
+                Log.w(
+                    TAG,
+                    "stopDelegateShellPermissionIdentity is unavailable on this Android build"
+                )
+                return
+            }
+            method.isAccessible = true
+            method.invoke(am)
             Log.i(TAG, "stopped shell permission delegation")
+        } catch (error: Throwable) {
+            Log.w(
+                TAG,
+                "Unable to stop shell permission delegation; " +
+                    "CarrierConfig operation result is preserved",
+                error
+            )
         }
     }
 
