@@ -7,7 +7,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.ServiceManager
-import android.system.Os
 import android.telephony.CarrierConfigManager
 import android.telephony.SubscriptionManager
 import android.util.Log
@@ -34,10 +33,8 @@ class BrokerInstrumentation : Instrumentation() {
         }
         val binder = ServiceManager.getService(Context.ACTIVITY_SERVICE)
         val am = IActivityManager.Stub.asInterface(ShizukuBinderWrapper(binder))
-        var delegated = false
+        val delegated = ShellPermissionDelegateCompat.start(am, TAG)
         try {
-            am.startDelegateShellPermissionIdentity(Os.getuid(), null)
-            delegated = true
             val cm = context.getSystemService(CarrierConfigManager::class.java)
             val sm = context.getSystemService(SubscriptionManager::class.java)
 
@@ -71,10 +68,7 @@ class BrokerInstrumentation : Instrumentation() {
             result.putBoolean(ImsModifier.BUNDLE_RESULT, false)
             result.putString(ImsModifier.BUNDLE_RESULT_MSG, t.message ?: t.javaClass.simpleName)
         } finally {
-            if (delegated) {
-                runCatching { am.stopDelegateShellPermissionIdentity() }
-                    .onFailure { Log.w(TAG, "stop delegate shell identity failed", it) }
-            }
+            ShellPermissionDelegateCompat.stop(am, TAG, delegated)
         }
 
         finish(Activity.RESULT_OK, result)

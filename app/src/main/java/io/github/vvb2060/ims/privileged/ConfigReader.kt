@@ -8,7 +8,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.ServiceManager
-import android.system.Os
 import android.telephony.CarrierConfigManager
 import android.util.Log
 import rikka.shizuku.ShizukuBinderWrapper
@@ -38,10 +37,8 @@ class ConfigReader : Instrumentation() {
         }
         val binder = ServiceManager.getService(Context.ACTIVITY_SERVICE)
         val am = IActivityManager.Stub.asInterface(ShizukuBinderWrapper(binder))
-        var delegated = false
+        val delegated = ShellPermissionDelegateCompat.start(am, TAG)
         try {
-            am.startDelegateShellPermissionIdentity(Os.getuid(), null)
-            delegated = true
             val subId = arguments.getInt(BUNDLE_SELECT_SIM_ID, -1)
             val cm = context.getSystemService(CarrierConfigManager::class.java)
             val config = cm.getConfigForSubId(subId)
@@ -60,10 +57,7 @@ class ConfigReader : Instrumentation() {
         } catch (t: Throwable) {
             Log.e(TAG, "read config failed", t)
         } finally {
-            if (delegated) {
-                runCatching { am.stopDelegateShellPermissionIdentity() }
-                    .onFailure { Log.w(TAG, "stop delegate shell identity failed", it) }
-            }
+            ShellPermissionDelegateCompat.stop(am, TAG, delegated)
         }
 
         finish(Activity.RESULT_OK, result)

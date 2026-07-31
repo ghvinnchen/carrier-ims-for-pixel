@@ -7,7 +7,6 @@ import android.app.Instrumentation
 import android.content.Context
 import android.os.Bundle
 import android.os.ServiceManager
-import android.system.Os
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyFrameworkInitializer
 import android.util.Log
@@ -34,11 +33,8 @@ class SimReader : Instrumentation() {
         }
         val binder = ServiceManager.getService(Context.ACTIVITY_SERVICE)
         val am = IActivityManager.Stub.asInterface(ShizukuBinderWrapper(binder))
-        var delegated = false
+        val delegated = ShellPermissionDelegateCompat.start(am, TAG)
         try {
-            Log.i(TAG, "starting shell permission delegation")
-            am.startDelegateShellPermissionIdentity(Os.getuid(), null)
-            delegated = true
             Log.d(TAG, "start read sim info list")
             val resultList = readByISub() ?: run {
                 val subManager =
@@ -54,14 +50,7 @@ class SimReader : Instrumentation() {
             Log.e(TAG, "failed to read sim info list", t)
             finish(Activity.RESULT_CANCELED, Bundle())
         } finally {
-            if (delegated) {
-                runCatching {
-                    am.stopDelegateShellPermissionIdentity()
-                    Log.i(TAG, "stopped shell permission delegation")
-                }.onFailure {
-                    Log.w(TAG, "failed to stop shell permission delegation", it)
-                }
-            }
+            ShellPermissionDelegateCompat.stop(am, TAG, delegated)
         }
     }
 

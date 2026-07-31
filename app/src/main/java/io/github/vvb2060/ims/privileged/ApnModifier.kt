@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.ServiceManager
 import android.provider.Telephony
-import android.system.Os
 import android.util.Log
 import rikka.shizuku.ShizukuBinderWrapper
 
@@ -47,10 +46,8 @@ class ApnModifier : Instrumentation() {
 
         val binder = ServiceManager.getService(Context.ACTIVITY_SERVICE)
         val am = IActivityManager.Stub.asInterface(ShizukuBinderWrapper(binder))
-        var delegated = false
+        val delegated = ShellPermissionDelegateCompat.start(am, TAG)
         try {
-            am.startDelegateShellPermissionIdentity(Os.getuid(), null)
-            delegated = true
             applyApn(arguments)
             result.putBoolean(BUNDLE_RESULT, true)
         } catch (t: Throwable) {
@@ -58,10 +55,7 @@ class ApnModifier : Instrumentation() {
             result.putBoolean(BUNDLE_RESULT, false)
             result.putString(BUNDLE_RESULT_MSG, t.message ?: t.javaClass.simpleName)
         } finally {
-            if (delegated) {
-                runCatching { am.stopDelegateShellPermissionIdentity() }
-                    .onFailure { Log.w(TAG, "stop delegate shell identity failed", it) }
-            }
+            ShellPermissionDelegateCompat.stop(am, TAG, delegated)
         }
         finish(Activity.RESULT_OK, result)
     }
