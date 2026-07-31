@@ -52,6 +52,7 @@ import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -3843,14 +3844,15 @@ private fun BrandHeader(compact: Boolean = false) {
         Box(
             modifier = Modifier
                 .size(if (compact) 58.dp else 64.dp)
-                .clip(RoundedCornerShape(if (compact) 20.dp else 22.dp))
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.30f)),
+                .clip(CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_brand),
                 contentDescription = null,
-                modifier = Modifier.size(if (compact) 52.dp else 58.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
                 contentScale = ContentScale.Fit,
             )
         }
