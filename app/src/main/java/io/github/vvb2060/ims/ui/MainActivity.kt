@@ -3853,7 +3853,7 @@ private fun BrandHeader(compact: Boolean = false) {
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(CircleShape),
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
             )
         }
         Column(
