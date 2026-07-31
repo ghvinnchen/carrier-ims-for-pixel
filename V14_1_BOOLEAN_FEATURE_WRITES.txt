@@ -1,0 +1,3 @@
+enableShow4GForLTE -> "show_4g_for_lte_data_icon_bool"
+enableVT -> CarrierConfigManager.KEY_CARRIER_VT_AVAILABLE_BOOL
+enableUT -> CarrierConfigManager.KEY_CARRIER_SUPPORTS_SS_OVER_UT_BOOL

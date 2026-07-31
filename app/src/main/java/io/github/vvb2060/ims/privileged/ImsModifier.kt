@@ -91,19 +91,22 @@ class ImsModifier : Instrumentation() {
             }
 
             // LTE 显示为 4G
-            if (enableShow4GForLTE) {
-                bundle.putBoolean("show_4g_for_lte_data_icon_bool", true)
-            }
+            bundle.putBoolean(
+            "show_4g_for_lte_data_icon_bool",
+            enableShow4GForLTE,
+        )
 
             // VT (视频通话) 配置
-            if (enableVT) {
-                bundle.putBoolean(CarrierConfigManager.KEY_CARRIER_VT_AVAILABLE_BOOL, true)
-            }
+            bundle.putBoolean(
+            CarrierConfigManager.KEY_CARRIER_VT_AVAILABLE_BOOL,
+            enableVT,
+        )
 
             // UT 补充服务配置
-            if (enableUT) {
-                bundle.putBoolean(CarrierConfigManager.KEY_CARRIER_SUPPORTS_SS_OVER_UT_BOOL, true)
-            }
+            bundle.putBoolean(
+            CarrierConfigManager.KEY_CARRIER_SUPPORTS_SS_OVER_UT_BOOL,
+            enableUT,
+        )
 
             // 跨 SIM 通话配置
             if (enableCrossSIM) {
