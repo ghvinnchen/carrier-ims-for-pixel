@@ -861,6 +861,58 @@ class MainViewModel(private val application: Application) : AndroidViewModel(app
         configBackupPrefs.edit { remove(id) }
     }
 
+    fun exportConfigProfile(snapshot: ConfigBackupSnapshot): String {
+        return JSONObject().apply {
+            put("format", "carrier_ims_profile")
+            put("version", 1)
+            put("profile", snapshot.toJson())
+        }.toString(2)
+    }
+
+    fun importConfigProfile(raw: String): ConfigBackupSnapshot? {
+        return runCatching {
+            val root = JSONObject(raw)
+            val profileJson = if (root.optString("format") == "carrier_ims_profile") {
+                root.optJSONObject("profile") ?: return@runCatching null
+            } else {
+                root
+            }
+            val parsed = parseConfigBackup(profileJson.toString()) ?: return@runCatching null
+            parsed.copy(
+                id = UUID.randomUUID().toString(),
+                name = parsed.name.ifBlank { "Imported profile" },
+                createdAtMillis = System.currentTimeMillis(),
+            ).also { imported ->
+                configBackupPrefs.edit {
+                    putString(imported.id, imported.toJson().toString())
+                }
+            }
+        }.getOrNull()
+    }
+
+    fun recommendedProfile(selectedSim: SimSelection): ConfigBackupSnapshot {
+        val recommended = Feature.entries.associateWith { current ->
+            val value: Any = when (current) {
+                Feature.VOLTE, Feature.UT -> true
+                Feature.CARRIER_NAME, Feature.COUNTRY_ISO -> ""
+                else -> false
+            }
+            FeatureValue(value, current.valueType)
+        }
+        return ConfigBackupSnapshot(
+            id = "recommended",
+            name = "Recommended IMS profile",
+            createdAtMillis = System.currentTimeMillis(),
+            subId = selectedSim.subId,
+            simTitle = selectedSim.showTitle,
+            mcc = selectedSim.mcc,
+            mnc = selectedSim.mnc,
+            countryIso = selectedSim.countryIso,
+            featureValues = recommended,
+            countryMccOverride = "",
+        )
+    }
+
     private suspend fun isDefaultPortalCheckReachable(): Boolean {
         return withContext(Dispatchers.IO) {
             DEFAULT_CAPTIVE_PORTAL_TEST_URLS.any { url -> isPortalUrlReachable(url) }

@@ -320,4 +320,11 @@
 
     <!-- Logcat -->
     <string name="title_filter_log_level">请选择日志过滤等级</string>
+    <string name="restore_recommended_profile">恢复推荐配置</string>
+    <string name="export_current_config">导出当前配置</string>
+    <string name="import_config">导入配置</string>
+    <string name="profile_export_success">CarrierConfig 已导出</string>
+    <string name="profile_export_failed">无法导出 CarrierConfig</string>
+    <string name="profile_import_success">配置已导入并加入已保存配置</string>
+    <string name="profile_import_failed">配置文件无效或无法读取</string>
 </resources>

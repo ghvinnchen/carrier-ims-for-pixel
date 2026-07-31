@@ -25,6 +25,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -539,6 +541,43 @@ class MainActivity : BaseActivity() {
         var configBackups by remember { mutableStateOf<List<ConfigBackupSnapshot>>(emptyList()) }
         var pendingBackupRestore by remember { mutableStateOf<ConfigBackupSnapshot?>(null) }
         var pendingBackupRestoreSim by remember { mutableStateOf<SimSelection?>(null) }
+        var pendingExportProfile by remember { mutableStateOf<ConfigBackupSnapshot?>(null) }
+
+        val exportProfileLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.CreateDocument("application/json"),
+        ) { uri ->
+            val snapshot = pendingExportProfile
+            pendingExportProfile = null
+            if (uri != null && snapshot != null) {
+                runCatching {
+                    context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.use {
+                        it.write(viewModel.exportConfigProfile(snapshot))
+                    } ?: error("Unable to open output file")
+                }.onSuccess {
+                    Toast.makeText(context, R.string.profile_export_success, Toast.LENGTH_SHORT).show()
+                }.onFailure {
+                    Toast.makeText(context, R.string.profile_export_failed, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        val importProfileLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            if (uri != null) {
+                runCatching {
+                    context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                        ?: error("Unable to open profile")
+                }.mapCatching { raw ->
+                    viewModel.importConfigProfile(raw) ?: error("Invalid profile")
+                }.onSuccess {
+                    configBackups = viewModel.loadConfigBackups()
+                    Toast.makeText(context, R.string.profile_import_success, Toast.LENGTH_SHORT).show()
+                }.onFailure {
+                    Toast.makeText(context, R.string.profile_import_failed, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
         val diagnosticsLines = remember { mutableStateListOf<String>() }
         val featureSwitches = remember { mutableStateMapOf<Feature, FeatureValue>() }
         val committedFeatureSwitches = remember { mutableStateMapOf<Feature, FeatureValue>() }
@@ -1352,6 +1391,32 @@ class MainActivity : BaseActivity() {
                             configBackups = viewModel.loadConfigBackups()
                             Toast.makeText(context, R.string.config_backup_saved, Toast.LENGTH_SHORT).show()
                         },
+                        onRestoreRecommendedProfile = {
+                            val sim = extraSelectedSim
+                            if (sim == null || sim.subId < 0) {
+                                Toast.makeText(context, R.string.select_single_sim, Toast.LENGTH_SHORT).show()
+                            } else {
+                                restoreBackupAction(sim, viewModel.recommendedProfile(sim), true)
+                            }
+                        },
+                        onExportCurrentConfig = {
+                            val sim = extraSelectedSim
+                            if (sim == null || sim.subId < 0) {
+                                Toast.makeText(context, R.string.select_single_sim, Toast.LENGTH_SHORT).show()
+                            } else {
+                                pendingExportProfile = viewModel.saveConfigBackup(
+                                    selectedSim = sim,
+                                    featureMap = buildCompleteFeatureMap(committedFeatureSwitches),
+                                    name = "${sim.showTitle} Current CarrierConfig",
+                                    countryMccOverride = committedCountryMccBySubId[sim.subId].orEmpty(),
+                                )
+                                configBackups = viewModel.loadConfigBackups()
+                                exportProfileLauncher.launch("CarrierIMS_${sim.mcc}_${sim.mnc}.json")
+                            }
+                        },
+                        onImportConfig = {
+                            importProfileLauncher.launch(arrayOf("application/json", "text/plain"))
+                        },
                         onRestoreBackup = { backup -> restoreBackupAction(extraSelectedSim, backup, false) },
                         onDeleteBackup = { backup ->
                             viewModel.deleteConfigBackup(backup.id)
@@ -1996,6 +2061,9 @@ private fun ExtraToolsPage(
     onPrepareApn: () -> Unit,
     onAddQuickTile: (Class<*>, Int) -> Unit,
     onBackupConfig: () -> Unit,
+    onRestoreRecommendedProfile: () -> Unit,
+    onExportCurrentConfig: () -> Unit,
+    onImportConfig: () -> Unit,
     onRestoreBackup: (ConfigBackupSnapshot) -> Unit,
     onDeleteBackup: (ConfigBackupSnapshot) -> Unit,
 ) {
@@ -2046,6 +2114,9 @@ private fun ExtraToolsPage(
         selectedSim = selectedSim,
         backups = configBackups,
         onBackupConfig = onBackupConfig,
+        onRestoreRecommendedProfile = onRestoreRecommendedProfile,
+        onExportCurrentConfig = onExportCurrentConfig,
+        onImportConfig = onImportConfig,
         onRestoreBackup = onRestoreBackup,
         onDeleteBackup = onDeleteBackup,
     )
@@ -2497,6 +2568,9 @@ private fun ConfigBackupCard(
     selectedSim: SimSelection?,
     backups: List<ConfigBackupSnapshot>,
     onBackupConfig: () -> Unit,
+    onRestoreRecommendedProfile: () -> Unit,
+    onExportCurrentConfig: () -> Unit,
+    onImportConfig: () -> Unit,
     onRestoreBackup: (ConfigBackupSnapshot) -> Unit,
     onDeleteBackup: (ConfigBackupSnapshot) -> Unit,
 ) {
@@ -2550,6 +2624,36 @@ private fun ConfigBackupCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+            }
+
+            Button(
+                onClick = onRestoreRecommendedProfile,
+                enabled = selectedSim != null && selectedSim.subId >= 0,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Text(stringResource(R.string.restore_recommended_profile))
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                OutlinedButton(
+                    onClick = onExportCurrentConfig,
+                    enabled = selectedSim != null && selectedSim.subId >= 0,
+                    modifier = Modifier.weight(1f).height(54.dp),
+                    shape = RoundedCornerShape(18.dp),
+                ) {
+                    Text(stringResource(R.string.export_current_config))
+                }
+                OutlinedButton(
+                    onClick = onImportConfig,
+                    modifier = Modifier.weight(1f).height(54.dp),
+                    shape = RoundedCornerShape(18.dp),
+                ) {
+                    Text(stringResource(R.string.import_config))
                 }
             }
 
