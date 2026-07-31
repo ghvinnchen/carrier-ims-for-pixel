@@ -3,7 +3,7 @@
     <string name="app_name">Carrier IMS</string>
     <string name="for_pixel">forked by Mystery0</string>
     <string name="brand_name">Carrier IMS for Pixel</string>
-    <string name="brand_subtitle">基于 TurboIMS · 运营商与 IMS 工具集</string>
+    <string name="brand_subtitle">运营商与 IMS 工具箱</string>
     <string name="tab_ims">IMS</string>
     <string name="tab_extra">附加</string>
     <string name="tab_support">支持</string>

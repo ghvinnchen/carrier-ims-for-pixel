@@ -1939,19 +1939,15 @@ private fun HomeStatusCard(
             .animateContentSize(),
         shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (ready) {
-                MaterialTheme.colorScheme.tertiaryContainer
-            } else {
-                MaterialTheme.colorScheme.primaryContainer
-            },
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
+            modifier = Modifier.padding(horizontal = 22.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            BrandHeader()
+            BrandHeader(compact = true)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -1961,21 +1957,13 @@ private fun HomeStatusCard(
                     Text(
                         text = if (ready) "IMS toolkit is ready" else "IMS toolkit status",
                         style = MaterialTheme.typography.titleLarge,
-                        color = if (ready) {
-                            MaterialTheme.colorScheme.onTertiaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        },
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.shizuku_status, shizukuStatusText),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (ready) {
-                            MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.76f)
-                        } else {
-                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.76f)
-                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Box(
@@ -2005,7 +1993,7 @@ private fun HomeStatusCard(
                 onClick = onRefresh,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(52.dp),
                 shape = RoundedCornerShape(18.dp),
                 contentPadding = PaddingValues(horizontal = 24.dp),
             ) {
@@ -2184,7 +2172,7 @@ private fun RegionCompatibilityCard(
                         if (isDomestic) R.string.region_status_yes else R.string.region_status_no
                     ),
                     modifier = Modifier.weight(1f),
-                    emphasized = isDomestic,
+                    emphasized = false,
                 )
                 V6MetricTile(
                     label = stringResource(R.string.region_tiktok_applicable),
@@ -2196,7 +2184,7 @@ private fun RegionCompatibilityCard(
                         }
                     ),
                     modifier = Modifier.weight(1f),
-                    emphasized = isDomestic,
+                    emphasized = false,
                 )
             }
         }
@@ -3750,7 +3738,7 @@ fun SystemInfoCard(
                 label = "Runtime",
                 value = if (ready) "Shizuku Ready" else shizukuStatusText,
                 modifier = Modifier.fillMaxWidth(),
-                emphasized = ready,
+                emphasized = false,
             )
 
             FilledTonalButton(
@@ -3847,22 +3835,22 @@ private fun ExpressiveInfoTile(
 }
 
 @Composable
-private fun BrandHeader() {
+private fun BrandHeader(compact: Boolean = false) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(if (compact) 14.dp else 16.dp),
     ) {
         Box(
             modifier = Modifier
-                .size(64.dp)
-                .clip(RoundedCornerShape(22.dp))
+                .size(if (compact) 58.dp else 64.dp)
+                .clip(RoundedCornerShape(if (compact) 20.dp else 22.dp))
                 .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.30f)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_brand),
                 contentDescription = null,
-                modifier = Modifier.size(58.dp),
+                modifier = Modifier.size(if (compact) 52.dp else 58.dp),
                 contentScale = ContentScale.Fit,
             )
         }
@@ -3872,13 +3860,13 @@ private fun BrandHeader() {
         ) {
             Text(
                 text = "Carrier IMS",
-                style = MaterialTheme.typography.headlineMedium,
+                style = if (compact) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "for Pixel",
-                style = MaterialTheme.typography.titleLarge,
+                style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
