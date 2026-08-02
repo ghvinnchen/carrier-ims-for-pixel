@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Carrier IMS</string>
+    <string name="app_name">Carrier IMS M3E</string>
     <string name="for_pixel">forked by Mystery0</string>
     <string name="brand_name">Carrier IMS for Pixel</string>
-    <string name="brand_subtitle">Carrier &amp; IMS Toolkit</string>
+    <string name="brand_subtitle">Carrier Toolkit for Pixel</string>
     <string name="tab_ims">IMS</string>
     <string name="tab_extra">Extra</string>
     <string name="tab_support">Support</string>
@@ -88,7 +88,7 @@
     <string name="issue_failure_hint_desc">Submit an Issue with system info and failure logs.</string>
     <string name="issue_failure_submit">Submit Issue</string>
     <string name="action_repo">Repo</string>
-    <string name="action_issue">Issue</string>
+    <string name="action_issue">Issues</string>
     <string name="action_logcat">Logs</string>
     <string name="action_update">Update</string>
     <string name="action_update_available">New</string>

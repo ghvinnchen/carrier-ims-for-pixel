@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Carrier IMS</string>
+    <string name="app_name">Carrier IMS M3E</string>
     <string name="for_pixel">forked by Mystery0</string>
     <string name="brand_name">Carrier IMS for Pixel</string>
-    <string name="brand_subtitle">运营商与 IMS 工具箱</string>
+    <string name="brand_subtitle">Pixel 运营商与 IMS 工具箱</string>
     <string name="tab_ims">IMS</string>
     <string name="tab_extra">附加</string>
     <string name="tab_support">支持</string>
@@ -88,7 +88,7 @@
     <string name="issue_failure_hint_desc">建议提交 Issue，并附带系统信息与失败日志。</string>
     <string name="issue_failure_submit">提交 Issue</string>
     <string name="action_repo">仓库</string>
-    <string name="action_issue">Issue</string>
+    <string name="action_issue">问题</string>
     <string name="action_logcat">日志</string>
     <string name="action_update">更新</string>
     <string name="action_update_available">有更新</string>
