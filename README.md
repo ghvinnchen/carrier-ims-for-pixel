@@ -1,4 +1,4 @@
-# Carrier IMS for Pixel (TurboIMS)
+# Carrier IMS for Pixel (Carrier IMS M3E)
 
 <p align="center">
   <img src="app/src/main/ic_launcher-playstore.png" width="128" alt="Carrier IMS logo" />
@@ -14,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ryfineZ/carrier-ims-for-pixel/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ryfineZ/carrier-ims-for-pixel"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/ryfineZ/carrier-ims-for-pixel"></a>
+  <a href="https://github.com/VinneyCHEN/CarrierIMS-M3E/releases"><img alt="Release" src="https://img.shields.io/github/v/release/VinneyCHEN/CarrierIMS-M3E"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/VinneyCHEN/CarrierIMS-M3E"></a>
   <img alt="Platform" src="https://img.shields.io/badge/Platform-Android%2013%2B-3DDC84">
   <img alt="Device" src="https://img.shields.io/badge/Device-Pixel%20Tensor-blue">
   <img alt="Permission" src="https://img.shields.io/badge/Requires-Shizuku-orange">
@@ -23,13 +23,13 @@
 
 ## 仓库迁移说明
 
-- 仓库已从 `ryfineZ/TurboIMS` 迁移为 `ryfineZ/carrier-ims-for-pixel`
+- 仓库已从 `ryfineZ/Carrier IMS M3E` 迁移为 `VinneyCHEN/CarrierIMS-M3E`
 - 建议使用 `3.8.5` 及以上版本，应用内「检查更新 / 提 Issue / 打开仓库」已切换到新仓库
 - 旧版本若遇到更新或 Issue 跳转异常，请直接从新仓库 Releases 手动下载安装
 
 ## 项目定位
 
-本项目是基于 [Mystery00/TurboIMS](https://github.com/Mystery00/TurboIMS) 的持续维护分支，面向中国大陆与跨区使用场景做了大量交互与兼容性增强。  
+本项目是基于 [Mystery00/Carrier IMS M3E](https://github.com/Mystery00/Carrier IMS M3E) 的持续维护分支，面向中国大陆与跨区使用场景做了大量交互与兼容性增强。  
 目标是让普通用户也能更低门槛地完成 IMS 功能调优与问题排查。
 
 ## 界面预览
@@ -63,7 +63,7 @@
 
 ## 快速开始
 
-1. 从 [Releases](https://github.com/ryfineZ/carrier-ims-for-pixel/releases) 下载并安装 APK  
+1. 从 [Releases](https://github.com/VinneyCHEN/CarrierIMS-M3E/releases) 下载并安装 APK  
 2. 安装并启动 [Shizuku](https://shizuku.rikka.app/zh-hans/)  
 3. 打开 App，授权 Shizuku  
 4. 选择 SIM，按需开启功能开关  
@@ -110,7 +110,7 @@ SIGN_KEY_PASSWORD=***
 
 ### 4. 旧版本“检查更新 / 提 Issue”异常怎么办
 
-- 项目仓库已迁移为 `ryfineZ/carrier-ims-for-pixel`，旧仓库地址在部分客户端/网络环境下可能出现跳转或 API 兼容异常  
+- 项目仓库已迁移为 `VinneyCHEN/CarrierIMS-M3E`，旧仓库地址在部分客户端/网络环境下可能出现跳转或 API 兼容异常  
 - 建议升级到 `3.8.5` 及以上版本，新版已内置新仓库地址，并对旧地址增加更新接口回退兜底  
 - 如你仍使用旧版且无法更新，可直接从新仓库 Releases 页面手动下载安装包  
 
@@ -125,11 +125,11 @@ SIGN_KEY_PASSWORD=***
 ## 更新记录
 
 - 详细版本变更见 [CHANGELOG.md](CHANGELOG.md)
-- 历史发布见 [Releases](https://github.com/ryfineZ/carrier-ims-for-pixel/releases)
+- 历史发布见 [Releases](https://github.com/VinneyCHEN/CarrierIMS-M3E/releases)
 
 ## 致谢
 
-- [Mystery00/TurboIMS](https://github.com/Mystery00/TurboIMS)
+- [Mystery00/Carrier IMS M3E](https://github.com/Mystery00/Carrier IMS M3E)
 - [vvb2060/Ims](https://github.com/vvb2060/Ims)
 - [kyujin-cho/pixel-volte-patch](https://github.com/kyujin-cho/pixel-volte-patch)
 - [nullbytepl/CarrierVanityName](https://github.com/nullbytepl/CarrierVanityName)

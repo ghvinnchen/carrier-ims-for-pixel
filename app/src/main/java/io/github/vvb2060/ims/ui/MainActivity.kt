@@ -185,14 +185,12 @@ import java.util.Locale
 
 private const val COUNTRY_ISO_OPTION_DEFAULT = "__default__"
 private const val COUNTRY_ISO_OPTION_OTHER = "__other__"
-private const val REPO_URL = "https://github.com/ryfineZ/carrier-ims-for-pixel"
-private const val REPO_ISSUE_URL = "https://github.com/ryfineZ/carrier-ims-for-pixel/issues/new"
-private const val REPO_OWNER = "ryfineZ"
-private const val REPO_NAME = "carrier-ims-for-pixel"
-private const val LEGACY_REPO_NAME = "TurboIMS"
+private const val REPO_URL = "https://github.com/VinneyCHEN/CarrierIMS-M3E"
+private const val REPO_ISSUE_URL = "https://github.com/VinneyCHEN/CarrierIMS-M3E/issues/new"
+private const val REPO_OWNER = "VinneyCHEN"
+private const val REPO_NAME = "CarrierIMS-M3E"
 private val RELEASES_LATEST_API_URLS = listOf(
     "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest",
-    "https://api.github.com/repos/$REPO_OWNER/$LEGACY_REPO_NAME/releases/latest",
 )
 private const val UPDATE_APK_MIME_TYPE = "application/vnd.android.package-archive"
 private const val UNKNOWN_INSTALLER_SOURCE_SETTINGS_SCHEME = "package:"
@@ -3861,7 +3859,7 @@ private fun BrandHeader(compact: Boolean = false) {
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(
-                text = "Carrier IMS",
+                text = "Carrier IMS M3E",
                 style = if (compact) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,

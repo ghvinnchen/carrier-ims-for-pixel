@@ -1,4 +1,4 @@
-# Carrier IMS for Pixel (TurboIMS)
+# Carrier IMS for Pixel (Carrier IMS M3E)
 
 <p align="center">
   <img src="app/src/main/ic_launcher-playstore.png" width="128" alt="Carrier IMS logo" />
@@ -14,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ryfineZ/carrier-ims-for-pixel/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ryfineZ/carrier-ims-for-pixel"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/ryfineZ/carrier-ims-for-pixel"></a>
+  <a href="https://github.com/VinneyCHEN/CarrierIMS-M3E/releases"><img alt="Release" src="https://img.shields.io/github/v/release/VinneyCHEN/CarrierIMS-M3E"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/VinneyCHEN/CarrierIMS-M3E"></a>
   <img alt="Platform" src="https://img.shields.io/badge/Platform-Android%2013%2B-3DDC84">
   <img alt="Device" src="https://img.shields.io/badge/Device-Pixel%20Tensor-blue">
   <img alt="Permission" src="https://img.shields.io/badge/Requires-Shizuku-orange">
@@ -23,13 +23,13 @@
 
 ## Repository Migration Note
 
-- Repository has been renamed from `ryfineZ/TurboIMS` to `ryfineZ/carrier-ims-for-pixel`.
+- Repository has been renamed from `ryfineZ/Carrier IMS M3E` to `VinneyCHEN/CarrierIMS-M3E`.
 - Use `3.8.5` or later. In-app actions (`Check Update / Submit Issue / Open Repo`) now point to the new repository.
 - If an old build fails to update or open issue links, install manually from the new Releases page.
 
 ## Positioning
 
-This project is a continuously maintained branch based on [Mystery00/TurboIMS](https://github.com/Mystery00/TurboIMS), with major usability and compatibility improvements for Mainland China and cross-region use cases.
+This project is a continuously maintained branch based on [Mystery00/Carrier IMS M3E](https://github.com/Mystery00/Carrier IMS M3E), with major usability and compatibility improvements for Mainland China and cross-region use cases.
 
 Recent improvements include:
 
@@ -58,7 +58,7 @@ Recent improvements include:
 
 ## Quick Start
 
-1. Download APK from [Releases](https://github.com/ryfineZ/carrier-ims-for-pixel/releases)
+1. Download APK from [Releases](https://github.com/VinneyCHEN/CarrierIMS-M3E/releases)
 2. Install and start [Shizuku](https://shizuku.rikka.app/)
 3. Open app and grant Shizuku permission
 4. Select SIM and toggle required features
@@ -105,7 +105,7 @@ SIGN_KEY_PASSWORD=***
 
 ### "Check update / Submit issue" fails on old versions
 
-- The repository has been renamed to `ryfineZ/carrier-ims-for-pixel`; old links may fail in some clients or network conditions.
+- The repository has been renamed to `VinneyCHEN/CarrierIMS-M3E`; old links may fail in some clients or network conditions.
 - Upgrade to `3.8.5` or later. New versions use the new repository endpoints and include a legacy API fallback for update checks.
 - If in-app update fails on an old build, download and install APK manually from the new Releases page.
 
@@ -120,11 +120,11 @@ SIGN_KEY_PASSWORD=***
 ## Changelog
 
 - Full changelog: [CHANGELOG.md](CHANGELOG.md)
-- Releases: [GitHub Releases](https://github.com/ryfineZ/carrier-ims-for-pixel/releases)
+- Releases: [GitHub Releases](https://github.com/VinneyCHEN/CarrierIMS-M3E/releases)
 
 ## Credits
 
-- [Mystery00/TurboIMS](https://github.com/Mystery00/TurboIMS)
+- [Mystery00/Carrier IMS M3E](https://github.com/Mystery00/Carrier IMS M3E)
 - [vvb2060/Ims](https://github.com/vvb2060/Ims)
 - [kyujin-cho/pixel-volte-patch](https://github.com/kyujin-cho/pixel-volte-patch)
 - [nullbytepl/CarrierVanityName](https://github.com/nullbytepl/CarrierVanityName)

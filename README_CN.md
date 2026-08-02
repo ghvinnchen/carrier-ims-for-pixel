@@ -1,4 +1,4 @@
-# Carrier IMS for Pixel (TurboIMS)
+# Carrier IMS for Pixel (Carrier IMS M3E)
 
 本仓库已将中文文档设为默认入口。
 
