@@ -158,9 +158,6 @@ import io.github.vvb2060.ims.model.ConfigBackupSnapshot
 import io.github.vvb2060.ims.model.NetworkExitStatus
 import io.github.vvb2060.ims.model.ShizukuStatus
 import io.github.vvb2060.ims.model.SimSelection
-import io.github.vvb2060.ims.model.SupportPaymentChannel
-import io.github.vvb2060.ims.model.SupportRecord
-import io.github.vvb2060.ims.model.SupportRules
 import io.github.vvb2060.ims.model.SystemInfo
 import io.github.vvb2060.ims.privileged.ImsModifier
 import io.github.vvb2060.ims.tiles.SIM1IMSStatusTileService
@@ -233,8 +230,6 @@ private enum class MainTab(
 ) {
     IMS(R.string.tab_ims),
     EXTRA(R.string.tab_extra),
-    SUPPORT(R.string.tab_support),
-    COOPERATION(R.string.tab_cooperation),
     ABOUT(R.string.tab_about),
 }
 
@@ -634,18 +629,7 @@ class MainActivity : BaseActivity() {
                 homeAdToShow?.let { viewModel.markHomeAdShown(it) }
             }
         }
-        LaunchedEffect(selectedTab) {
-            if (selectedTab != MainTab.SUPPORT || !viewModel.isDodopaySupportFeedConfigured()) {
-                return@LaunchedEffect
-            }
-            supportRecordsLoading = true
-            supportRecordsError = null
-            val result = viewModel.fetchSupportRecords()
-            supportRecords = result.getOrDefault(emptyList())
-            supportRecordsError = result.exceptionOrNull()?.message
-            supportRecordsLoading = false
-        }
-        LaunchedEffect(allSimList) {
+LaunchedEffect(allSimList) {
             val validSubIds = allSimList.filter { it.subId >= 0 }.map { it.subId }.toSet()
             imsRegistrationStatusMap.keys.toList()
                 .filterNot { validSubIds.contains(it) }
@@ -910,8 +894,6 @@ class MainActivity : BaseActivity() {
                         val tabIcon = when (tab) {
                             MainTab.IMS -> Icons.Rounded.SignalCellularAlt
                             MainTab.EXTRA -> Icons.Rounded.AddCircle
-                            MainTab.SUPPORT -> Icons.Rounded.Favorite
-                            MainTab.COOPERATION -> Icons.Rounded.Handshake
                             MainTab.ABOUT -> Icons.Rounded.Info
                         }
                         NavigationBarItem(
@@ -1039,7 +1021,7 @@ class MainActivity : BaseActivity() {
                         },
                         onIssueClick = submitIssueAction,
                         onDonateClick = {
-                            selectedTab = MainTab.SUPPORT
+                            // Donation entry removed in V18.
                         },
                         showDonateButton = false,
                     )
@@ -1423,31 +1405,7 @@ class MainActivity : BaseActivity() {
                         },
                     )
                 }
-                if (selectedTab == MainTab.SUPPORT) {
-                    SupportPage(
-                        supportPaymentConfigured = viewModel.isDodopaySupportConfigured(),
-                        adFreeEnabled = adFreeEnabled,
-                        supportRecordsConfigured = viewModel.isDodopaySupportFeedConfigured(),
-                        supportRecordsLoading = supportRecordsLoading,
-                        supportRecords = supportRecords,
-                        supportRecordsError = supportRecordsError,
-                        onCreateSupportOrder = supportOrder@{ name, message, amount, channel ->
-                            val result = viewModel.buildDodopaySupportUrl(name, message, amount, channel)
-                            val url = result.getOrNull()
-                            if (url == null) {
-                                Toast.makeText(
-                                    context,
-                                    result.exceptionOrNull()?.message
-                                        ?: context.getString(R.string.support_payment_open_failed),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                return@supportOrder
-                            }
-                            supportPaymentUrl = url
-                        },
-                    )
-                }
-                if (selectedTab == MainTab.COOPERATION) {
+                if (selectedTab == MainTab.ABOUT) {
                     CooperationPage(
                         adsConfigured = viewModel.isAdServiceConfigured(),
                         businessIntentConfigured = viewModel.isBusinessIntentConfigured(),
