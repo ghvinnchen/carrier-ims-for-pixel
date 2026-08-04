@@ -158,6 +158,9 @@ import io.github.vvb2060.ims.model.ConfigBackupSnapshot
 import io.github.vvb2060.ims.model.NetworkExitStatus
 import io.github.vvb2060.ims.model.ShizukuStatus
 import io.github.vvb2060.ims.model.SimSelection
+import io.github.vvb2060.ims.model.SupportPaymentChannel
+import io.github.vvb2060.ims.model.SupportRecord
+import io.github.vvb2060.ims.model.SupportRules
 import io.github.vvb2060.ims.model.SystemInfo
 import io.github.vvb2060.ims.privileged.ImsModifier
 import io.github.vvb2060.ims.tiles.SIM1IMSStatusTileService
@@ -629,7 +632,7 @@ class MainActivity : BaseActivity() {
                 homeAdToShow?.let { viewModel.markHomeAdShown(it) }
             }
         }
-LaunchedEffect(allSimList) {
+        LaunchedEffect(allSimList) {
             val validSubIds = allSimList.filter { it.subId >= 0 }.map { it.subId }.toSet()
             imsRegistrationStatusMap.keys.toList()
                 .filterNot { validSubIds.contains(it) }
@@ -1020,9 +1023,7 @@ LaunchedEffect(allSimList) {
                             }
                         },
                         onIssueClick = submitIssueAction,
-                        onDonateClick = {
-                            // Donation entry removed in V18.
-                        },
+                        onDonateClick = { },
                         showDonateButton = false,
                     )
                 }
@@ -1402,45 +1403,6 @@ LaunchedEffect(allSimList) {
                         onDeleteBackup = { backup ->
                             viewModel.deleteConfigBackup(backup.id)
                             configBackups = viewModel.loadConfigBackups()
-                        },
-                    )
-                }
-                if (selectedTab == MainTab.ABOUT) {
-                    CooperationPage(
-                        adsConfigured = viewModel.isAdServiceConfigured(),
-                        businessIntentConfigured = viewModel.isBusinessIntentConfigured(),
-                        businessIntentSubmitting = submittingBusinessIntent,
-                        cooperationAds = if (adFreeEnabled) {
-                            emptyList()
-                        } else {
-                            commercialAds.filter { it.placement == AdPlacement.COOPERATION_CARD }
-                        },
-                        businessContactText = BuildConfig.BUSINESS_CONTACT_TEXT,
-                        businessContactUrl = BuildConfig.BUSINESS_CONTACT_URL,
-                        onOpenAd = { ad ->
-                            if (ad.actionUrl.isNotBlank()) uriHandler.openUri(ad.actionUrl)
-                        },
-                        onSubmitBusinessIntent = { intentType, name, contact, message ->
-                            scope.launch {
-                                submittingBusinessIntent = true
-                                val result = viewModel.submitBusinessIntent(intentType, name, contact, message)
-                                submittingBusinessIntent = false
-                                if (result.isSuccess) {
-                                    Toast.makeText(context, R.string.business_intent_success, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(
-                                            R.string.business_intent_failed,
-                                            result.exceptionOrNull()?.message ?: "unknown"
-                                        ),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
-                        },
-                        onOpenBusinessContact = { url ->
-                            if (url.isNotBlank()) uriHandler.openUri(url)
                         },
                     )
                 }
