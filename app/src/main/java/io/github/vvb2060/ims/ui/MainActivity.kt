@@ -44,10 +44,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -73,7 +75,6 @@ import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -92,13 +93,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -889,35 +889,86 @@ class MainActivity : BaseActivity() {
             containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    tonalElevation = NavigationBarDefaults.Elevation,
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    MainTab.entries.forEach { tab ->
-                        val tabIcon = when (tab) {
-                            MainTab.IMS -> Icons.Rounded.SignalCellularAlt
-                            MainTab.EXTRA -> Icons.Rounded.AddCircle
-                            MainTab.ABOUT -> Icons.Rounded.Info
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(30.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        tonalElevation = 4.dp,
+                        shadowElevation = 8.dp,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(72.dp)
+                                .padding(horizontal = 10.dp, vertical = 9.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            MainTab.entries.forEach { tab ->
+                                val selected = selectedTab == tab
+                                val tabIcon = when (tab) {
+                                    MainTab.IMS -> Icons.Rounded.SignalCellularAlt
+                                    MainTab.EXTRA -> Icons.Rounded.AddCircle
+                                    MainTab.ABOUT -> Icons.Rounded.Info
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(54.dp)
+                                        .clip(RoundedCornerShape(999.dp))
+                                        .background(
+                                            if (selected) {
+                                                MaterialTheme.colorScheme.secondaryContainer
+                                            } else {
+                                                Color.Transparent
+                                            }
+                                        )
+                                        .selectable(
+                                            selected = selected,
+                                            onClick = { selectedTab = tab },
+                                        )
+                                        .animateContentSize(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    if (selected) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(9.dp),
+                                        ) {
+                                            Icon(
+                                                imageVector = tabIcon,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(25.dp),
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            )
+                                            Text(
+                                                text = stringResource(tab.labelRes),
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                maxLines = 1,
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = stringResource(tab.labelRes),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 1,
+                                        )
+                                    }
+                                }
+                            }
                         }
-                        NavigationBarItem(
-                            selected = selectedTab == tab,
-                            onClick = { selectedTab = tab },
-                            icon = {
-                                Icon(
-                                    imageVector = tabIcon,
-                                    contentDescription = stringResource(tab.labelRes),
-                                    modifier = Modifier.size(26.dp),
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = stringResource(tab.labelRes),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    maxLines = 1,
-                                )
-                            },
-                            alwaysShowLabel = true,
-                        )
                     }
                 }
             },
