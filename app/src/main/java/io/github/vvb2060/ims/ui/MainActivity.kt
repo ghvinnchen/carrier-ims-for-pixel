@@ -892,21 +892,21 @@ class MainActivity : BaseActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 46.dp, vertical = 8.dp),
+                        .padding(horizontal = 50.dp, vertical = 7.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(31.dp),
+                        shape = RoundedCornerShape(30.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        tonalElevation = 4.dp,
-                        shadowElevation = 5.dp,
+                        tonalElevation = 3.dp,
+                        shadowElevation = 4.dp,
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                 .height(62.dp)
-                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                                 .height(60.dp)
+                                .padding(horizontal = 7.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
@@ -921,7 +921,7 @@ class MainActivity : BaseActivity() {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                         .height(46.dp)
+                                         .height(44.dp)
                                         .clip(RoundedCornerShape(999.dp))
                                         .background(
                                             if (selected) {
@@ -940,12 +940,12 @@ class MainActivity : BaseActivity() {
                                     if (selected) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(9.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                                         ) {
                                             Icon(
                                                 imageVector = tabIcon,
                                                 contentDescription = null,
-                                                modifier = Modifier.size(25.dp),
+                                                modifier = Modifier.size(21.dp),
                                                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                             )
                                             Text(
