@@ -978,7 +978,10 @@ class MainActivity : BaseActivity() {
                     .consumeWindowInsets(innerPadding)
                     .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp)
+                    // Keep the last card fully above the floating navigation bar.
+                    // The extra scroll clearance mimics Google Photos: content can
+                    // scroll past the floating control instead of ending behind it.
+                    .padding(bottom = 112.dp)
             ) {
                 if (selectedTab == MainTab.IMS) {
                     HomeStatusCard(
