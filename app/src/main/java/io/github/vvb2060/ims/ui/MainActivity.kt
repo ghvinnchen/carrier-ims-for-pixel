@@ -892,23 +892,23 @@ class MainActivity : BaseActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                        .padding(horizontal = 46.dp, vertical = 8.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(30.dp),
+                        shape = RoundedCornerShape(31.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
                         tonalElevation = 4.dp,
-                        shadowElevation = 8.dp,
+                        shadowElevation = 5.dp,
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(72.dp)
-                                .padding(horizontal = 10.dp, vertical = 9.dp),
+                                 .height(62.dp)
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             MainTab.entries.forEach { tab ->
                                 val selected = selectedTab == tab
@@ -921,7 +921,7 @@ class MainActivity : BaseActivity() {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(54.dp)
+                                         .height(46.dp)
                                         .clip(RoundedCornerShape(999.dp))
                                         .background(
                                             if (selected) {
@@ -1974,7 +1974,7 @@ private fun HomeStatusCard(
                 Icon(
                     imageVector = Icons.Rounded.Cached,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(22.dp),
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
@@ -2209,7 +2209,7 @@ private fun NetworkExitCard(
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
             .animateContentSize(),
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(31.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (verified) {
                 MaterialTheme.colorScheme.tertiaryContainer
@@ -2542,7 +2542,7 @@ private fun ConfigBackupCard(
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
             .animateContentSize(),
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(31.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ),
@@ -2605,14 +2605,14 @@ private fun ConfigBackupCard(
                 OutlinedButton(
                     onClick = onExportCurrentConfig,
                     enabled = selectedSim != null && selectedSim.subId >= 0,
-                    modifier = Modifier.weight(1f).height(54.dp),
+                    modifier = Modifier.weight(1f) .height(46.dp),
                     shape = RoundedCornerShape(18.dp),
                 ) {
                     Text(stringResource(R.string.export_current_config))
                 }
                 OutlinedButton(
                     onClick = onImportConfig,
-                    modifier = Modifier.weight(1f).height(54.dp),
+                    modifier = Modifier.weight(1f) .height(46.dp),
                     shape = RoundedCornerShape(18.dp),
                 ) {
                     Text(stringResource(R.string.import_config))
@@ -2694,7 +2694,7 @@ private fun SupportPage(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(31.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ),
@@ -2798,7 +2798,7 @@ private fun SupportPage(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(31.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
@@ -2998,7 +2998,7 @@ private fun CooperationPage(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(31.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ),
@@ -3419,7 +3419,7 @@ private fun SupportPaymentDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 8.dp, top = 6.dp, end = 8.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -3504,7 +3504,7 @@ private fun ApnConfirmDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.apn_confirm_title)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 KeyValueRow(stringResource(R.string.apn_name), draft.name)
                 KeyValueRow("APN", draft.apn)
                 KeyValueRow(stringResource(R.string.apn_type), draft.type)
@@ -3725,7 +3725,7 @@ fun SystemInfoCard(
                 Icon(
                     imageVector = Icons.Rounded.Cached,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(22.dp),
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
@@ -3786,7 +3786,7 @@ private fun ExpressiveInfoTile(
                 }
             )
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = label,
@@ -4877,7 +4877,7 @@ fun BooleanFeatureItem(
                 Icon(
                     imageVector = featureIcon,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(22.dp),
                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
 
