@@ -971,16 +971,18 @@ class MainActivity : BaseActivity() {
                     }
                 }
             },
-        ) { innerPadding ->
+        ) { _ ->
             Column(
                 modifier = Modifier
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding)
+                    // Intentionally do NOT apply Scaffold's bottomBar innerPadding.
+                    // This makes page content continue behind the floating bar,
+                    // matching Google Photos' true overlay behavior.
+                    .fillMaxSize()
                     .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
-                    // Keep the last card fully above the floating navigation bar.
-                    // The extra scroll clearance mimics Google Photos: content can
-                    // scroll past the floating control instead of ending behind it.
+                    // End-of-list clearance: although content normally scrolls
+                    // behind the floating bar, the final card can still be pulled
+                    // completely above it when the user reaches the bottom.
                     .padding(bottom = 112.dp)
             ) {
                 if (selectedTab == MainTab.IMS) {
