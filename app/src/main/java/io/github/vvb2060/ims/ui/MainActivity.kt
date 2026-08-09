@@ -898,15 +898,15 @@ class MainActivity : BaseActivity() {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(30.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         tonalElevation = 3.dp,
-                        shadowElevation = 4.dp,
+                        shadowElevation = 3.dp,
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                  .height(60.dp)
-                                .padding(horizontal = 7.dp, vertical = 6.dp),
+                                .padding(horizontal = 6.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
@@ -925,7 +925,7 @@ class MainActivity : BaseActivity() {
                                         .clip(RoundedCornerShape(999.dp))
                                         .background(
                                             if (selected) {
-                                                MaterialTheme.colorScheme.secondaryContainer
+                                                MaterialTheme.colorScheme.primaryContainer
                                             } else {
                                                 Color.Transparent
                                             }
@@ -940,13 +940,13 @@ class MainActivity : BaseActivity() {
                                     if (selected) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(5.dp),
                                         ) {
                                             Icon(
                                                 imageVector = tabIcon,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(21.dp),
-                                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                             )
                                             Text(
                                                 text = stringResource(tab.labelRes),
