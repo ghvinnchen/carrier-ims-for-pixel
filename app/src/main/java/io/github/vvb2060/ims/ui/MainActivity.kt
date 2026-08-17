@@ -118,6 +118,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -132,6 +133,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -225,6 +227,49 @@ private enum class CaptivePortalAction {
     FIX,
     RESTORE,
     NONE,
+}
+
+
+// Google Photos-style Collections tab glyph: three upright items on a shelf.
+// Kept as a local vector so the project does not need material-icons-extended.
+private val GooglePhotosCollectionsIcon: ImageVector by lazy {
+    ImageVector.Builder(
+        name = "GooglePhotosCollections",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        path(fill = SolidColor(Color.Black)) {
+            // Left short book
+            moveTo(4.0f, 8.4f)
+            lineTo(6.7f, 8.4f)
+            lineTo(6.7f, 17.2f)
+            lineTo(4.0f, 17.2f)
+            close()
+
+            // Center tall book
+            moveTo(8.3f, 4.2f)
+            lineTo(11.0f, 4.2f)
+            lineTo(11.0f, 17.2f)
+            lineTo(8.3f, 17.2f)
+            close()
+
+            // Right book, slightly slanted like the Photos Collections glyph
+            moveTo(13.0f, 6.2f)
+            lineTo(15.6f, 5.6f)
+            lineTo(18.3f, 16.6f)
+            lineTo(15.7f, 17.2f)
+            close()
+
+            // Shelf
+            moveTo(3.2f, 18.7f)
+            lineTo(20.3f, 18.7f)
+            lineTo(20.3f, 20.4f)
+            lineTo(3.2f, 20.4f)
+            close()
+        }
+    }.build()
 }
 
 private enum class MainTab(
@@ -914,7 +959,7 @@ class MainActivity : BaseActivity() {
                                 val selected = selectedTab == tab
                                 val tabIcon = when (tab) {
                                     MainTab.IMS -> Icons.Rounded.SignalCellularAlt
-                                    MainTab.EXTRA -> Icons.Rounded.AddCircle
+                                    MainTab.EXTRA -> GooglePhotosCollectionsIcon
                                     MainTab.ABOUT -> Icons.Rounded.Info
                                 }
 

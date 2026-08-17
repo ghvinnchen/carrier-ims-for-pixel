@@ -5,7 +5,7 @@
     <string name="brand_name">Carrier IMS for Pixel</string>
     <string name="brand_subtitle">Pixel 运营商与 IMS 工具箱</string>
     <string name="tab_ims">IMS</string>
-    <string name="tab_extra">附加</string>
+    <string name="tab_extra">Connectivity</string>
     <string name="tab_support">支持</string>
     <string name="tab_cooperation">合作</string>
     <string name="tab_about">关于</string>
