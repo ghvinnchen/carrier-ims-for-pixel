@@ -965,8 +965,11 @@ class MainActivity : BaseActivity() {
 
                                 Box(
                                     modifier = Modifier
-                                        .weight(1f)
-                                         .height(44.dp)
+                                        // Give the active tab more horizontal room so long labels
+                                        // such as "Connectivity" remain fully inside the pill.
+                                        // 1.4 + 0.8 + 0.8 keeps the total row weight at 3.0.
+                                        .weight(if (selected) 1.4f else 0.8f)
+                                        .height(44.dp)
                                         .clip(RoundedCornerShape(999.dp))
                                         .background(
                                             if (selected) {
@@ -997,7 +1000,7 @@ class MainActivity : BaseActivity() {
                                                 text = stringResource(tab.labelRes),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                                 maxLines = 1,
                                             )
                                         }
