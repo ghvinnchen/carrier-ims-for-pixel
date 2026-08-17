@@ -966,8 +966,9 @@ class MainActivity : BaseActivity() {
 
                                 Box(
                                     modifier = Modifier
-                                        // Keep three equal tap targets. The selected background is
-                                        // a separate wrap-content child, like Google Photos.
+                                        // Keep the three tap targets equal width.
+                                        // Only the visible selected pill wraps its own content,
+                                        // which prevents IMS/About from looking oversized.
                                         .weight(1f)
                                         .height(44.dp)
                                         .selectable(
@@ -984,52 +985,6 @@ class MainActivity : BaseActivity() {
                                                 .clip(RoundedCornerShape(999.dp))
                                                 .background(MaterialTheme.colorScheme.primaryContainer)
                                                 .padding(horizontal = 14.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                        ) {
-                                            Icon(
-                                                imageVector = tabIcon,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(21.dp),
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                            )
-                                            Text(
-                                                text = stringResource(tab.labelRes),
-                                                style = MaterialTheme.typography.labelLarge,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                maxLines = 1,
-                                            )
-                                        }
-                                    } else {
-                                        Text(
-                                            text = stringResource(tab.labelRes),
-                                            style = MaterialTheme.typography.labelLarge,
-                                            fontWeight = FontWeight.Medium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            maxLines = 1,
-                                        )
-                                    }
-                                }
-                                        )
-                                        .height(44.dp)
-                                        .clip(RoundedCornerShape(999.dp))
-                                        .background(
-                                            if (selected) {
-                                                MaterialTheme.colorScheme.primaryContainer
-                                            } else {
-                                                Color.Transparent
-                                            }
-                                        )
-                                        .selectable(
-                                            selected = selected,
-                                            onClick = { selectedTab = tab },
-                                        )
-                                        .animateContentSize(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    if (selected) {
-                                        Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(5.dp),
                                         ) {
