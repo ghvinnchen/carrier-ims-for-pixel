@@ -49,7 +49,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -966,25 +965,25 @@ class MainActivity : BaseActivity() {
 
                                 Box(
                                     modifier = Modifier
-                                        // Keep the three tap targets equal width.
-                                        // Only the visible selected pill wraps its own content,
-                                        // which prevents IMS/About from looking oversized.
                                         .weight(1f)
-                                        .height(44.dp)
+                                         .height(44.dp)
+                                        .clip(RoundedCornerShape(999.dp))
+                                        .background(
+                                            if (selected) {
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            } else {
+                                                Color.Transparent
+                                            }
+                                        )
                                         .selectable(
                                             selected = selected,
                                             onClick = { selectedTab = tab },
-                                        ),
+                                        )
+                                        .animateContentSize(),
                                     contentAlignment = Alignment.Center,
                                 ) {
                                     if (selected) {
                                         Row(
-                                            modifier = Modifier
-                                                .wrapContentWidth()
-                                                .height(40.dp)
-                                                .clip(RoundedCornerShape(999.dp))
-                                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                                .padding(horizontal = 14.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(5.dp),
                                         ) {
@@ -998,7 +997,7 @@ class MainActivity : BaseActivity() {
                                                 text = stringResource(tab.labelRes),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
                                                 maxLines = 1,
                                             )
                                         }
