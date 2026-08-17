@@ -49,6 +49,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -965,15 +966,51 @@ class MainActivity : BaseActivity() {
 
                                 Box(
                                     modifier = Modifier
-                                        // Give the active tab more horizontal room so long labels
-                                        // such as "Connectivity" remain fully inside the pill.
-                                        // 1.4 + 0.8 + 0.8 keeps the total row weight at 3.0.
-                                        .weight(
-                                            when {
-                                                !selected -> 0.9f
-                                                tab == MainTab.EXTRA -> 1.35f
-                                                else -> 1.15f
-                                            }
+                                        // Keep three equal tap targets. The selected background is
+                                        // a separate wrap-content child, like Google Photos.
+                                        .weight(1f)
+                                        .height(44.dp)
+                                        .selectable(
+                                            selected = selected,
+                                            onClick = { selectedTab = tab },
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    if (selected) {
+                                        Row(
+                                            modifier = Modifier
+                                                .wrapContentWidth()
+                                                .height(40.dp)
+                                                .clip(RoundedCornerShape(999.dp))
+                                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                                .padding(horizontal = 14.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                        ) {
+                                            Icon(
+                                                imageVector = tabIcon,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(21.dp),
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            )
+                                            Text(
+                                                text = stringResource(tab.labelRes),
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                maxLines = 1,
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = stringResource(tab.labelRes),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 1,
+                                        )
+                                    }
+                                }
                                         )
                                         .height(44.dp)
                                         .clip(RoundedCornerShape(999.dp))
