@@ -968,7 +968,13 @@ class MainActivity : BaseActivity() {
                                         // Give the active tab more horizontal room so long labels
                                         // such as "Connectivity" remain fully inside the pill.
                                         // 1.4 + 0.8 + 0.8 keeps the total row weight at 3.0.
-                                        .weight(if (selected) 1.4f else 0.8f)
+                                        .weight(
+                                            when {
+                                                !selected -> 0.9f
+                                                tab == MainTab.EXTRA -> 1.35f
+                                                else -> 1.15f
+                                            }
+                                        )
                                         .height(44.dp)
                                         .clip(RoundedCornerShape(999.dp))
                                         .background(
